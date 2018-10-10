@@ -1,0 +1,52 @@
+---
+:window_w: 640
+:window_h: 480
+:volume: 20
+:repeat: true
+:next: true
+:shuffle: true
+:bg_img: 'FILE_PATH_BG'
+:font: 'FILE_PATH_FONT'
+:bg_type: 'normal' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
+:bg_color:
+    :red: 0
+    :green: 0
+    :blue: 20
+    :alpha: 155
+:view_left_bg_color:
+    :red: 200
+    :green: 0
+    :blue: 20
+    :alpha: 255
+:view_right_bg_color:
+    :red: 0
+    :green: 200
+    :blue: 20
+    :alpha: 255
+:view_bottom_bg_color:
+    :red: 0
+    :green: 0
+    :blue: 200
+    :alpha: 255
+:fg_color:
+    :red: 255
+    :green: 255
+    :blue: 255
+    :alpha: 0
+:text_color:
+    :red: 255
+    :green: 255
+    :blue: 255
+    :alpha: 0
+:volume_bar_color:
+    :red: 0
+    :green: 255
+    :blue: 55
+    :alpha: 0
+:prog_bar_color:
+    :red: 0
+    :green: 155
+    :blue: 155
+    alpha: 0
+
+

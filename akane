@@ -1,0 +1,105 @@
+#!/home/ryu/.rvm/rubies/ruby-2.5.1/bin/ruby
+require "sdl2"
+require "yaml"
+require "./akane_sound/module.util.rb"
+
+class Akane
+  @@window = nil
+  @@renderer = nil
+  @@pref_dir = nil
+  @@screen = nil
+  @@config = Hash.new
+  def initialize
+    SDL2.init(SDL2::INIT_TIMER|SDL2::INIT_AUDIO|SDL2::INIT_VIDEO|
+              SDL2::INIT_EVENTS)
+    SDL2::TTF.init
+
+    @@pref_dir = SDL2.preference_path("sxp", "akane_sound")
+    unless File.file?(@@pref_dir+"config.yaml")
+      #config[:window_w] = 640
+      #config[:window_h] = 480
+      #config[:bg_img] = ""
+      #yaml = config.to_yaml
+
+      file = File.open("./akane_sound/config.yaml", "r")
+      contents = file.read
+      file.close
+      contents.sub! 'FILE_PATH_BG', @@pref_dir+'akane_bg.png'
+      contents.sub! 'FILE_PATH_FONT', @@pref_dir+'KosugiMaru-Regular.ttf'
+
+      File.open(@@pref_dir+'config.yaml', 'w') { |file| file.write(contents) }
+      @@config = YAML.load(File.open(@@pref_dir+'config.yaml'))
+      Util.binary_copy(@@pref_dir, 'akane_bg.png')
+      Util.binary_copy(@@pref_dir, 'KosugiMaru-Regular.ttf')
+
+    else
+      @@config = YAML.load(File.open(@@pref_dir+'config.yaml'))
+    end
+    
+    @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
+                                   SDL2::Window::POS_CENTERED,
+                                   @@config[:window_w], @@config[:window_h], 0)
+
+    @@renderer = @@window.create_renderer(-1, 0)
+    @@screen = SDL2::Rect[0, 0, @@config[:window_w], @@config[:window_h]]
+
+  end
+
+  def run(argv)
+    if ARGV[0] == "debug"
+      File.delete(File.open(@@pref_dir+'config.yaml'))
+    end
+    font = SDL2::TTF.open(@@config[:font], 20)
+
+    bg = Background.new(@@config[:bg_img])
+    inp = Input.new
+    view_left = View.new(0, 0, 320, 400, @@config[:view_left_bg_color])
+    view_right = View.new(320, 0, 320, 400, @@config[:view_right_bg_color])
+    view_bottom = View.new(0, 400, 640, 80, @@config[:view_bottom_bg_color])
+    loop do
+      while event = SDL2::Event.poll
+        inp.handle_event(event)
+      end
+      #update
+      bg.update
+      #draw
+      bg.draw
+      view_left.draw
+      view_right.draw
+      view_bottom.draw
+      @@renderer.present
+      if inp.quit >= 1
+        exit
+      end
+    end
+  end
+end
+
+class View < Akane
+  @rect = nil
+  @col = nil
+  def initialize(x, y, w, h, col)
+    @rect = SDL2::Rect[x, y, w, h]
+    @col = col
+    Util.p("#{col}")
+  end
+
+  def update
+  end
+
+  def draw
+    @@renderer.draw_blend_mode = SDL2::BlendMode::BLEND
+    @@renderer.draw_color = [@col[:red],
+                             @col[:green],
+                             @col[:blue],
+                             @col[:alpha]]
+    #TODO viewport?
+
+    @@renderer.fill_rect(@rect)
+  end
+end
+
+require "./akane_sound/class.background.rb"
+require "./akane_sound/class.input.rb"
+
+Akane.new.run(ARGV)
