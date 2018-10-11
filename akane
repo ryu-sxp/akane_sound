@@ -8,6 +8,7 @@ class Akane
   @@renderer = nil
   @@pref_dir = nil
   @@screen = nil
+  @@status = nil
   @@config = Hash.new
   def initialize
     SDL2.init(SDL2::INIT_TIMER|SDL2::INIT_AUDIO|SDL2::INIT_VIDEO|
@@ -53,9 +54,9 @@ class Akane
 
     bg = Background.new(@@config[:bg_img])
     inp = Input.new
-    view_left = View.new(0, 0, 320, 400, @@config[:view_left_bg_color])
-    view_right = View.new(320, 0, 320, 400, @@config[:view_right_bg_color])
-    view_bottom = View.new(0, 400, 640, 80, @@config[:view_bottom_bg_color])
+    @@status = ModuleStatus.new(0, 400, 640, 80, @@config[:view_bottom_bg_color])
+    module_left = ModuleLeft.new(0, 0, 320, 400, @@config[:view_left_bg_color])
+    module_right = ModuleRight.new(320, 0, 320, 400, @@config[:view_right_bg_color])
     loop do
       while event = SDL2::Event.poll
         inp.handle_event(event)
@@ -64,9 +65,9 @@ class Akane
       bg.update
       #draw
       bg.draw
-      view_left.draw
-      view_right.draw
-      view_bottom.draw
+      module_left.draw
+      module_right.draw
+      @@status.draw
       @@renderer.present
       if inp.quit >= 1
         exit
@@ -75,13 +76,12 @@ class Akane
   end
 end
 
-class View < Akane
+class ViewAbstract < Akane
   @rect = nil
   @col = nil
   def initialize(x, y, w, h, col)
     @rect = SDL2::Rect[x, y, w, h]
     @col = col
-    Util.p("#{col}")
   end
 
   def update
@@ -96,6 +96,45 @@ class View < Akane
     #TODO viewport?
 
     @@renderer.fill_rect(@rect)
+  end
+end
+
+class ModuleLeft < ViewAbstract
+  def initialize(x, y, w, h, col)
+    super
+  end
+
+  def update
+  end
+  
+  def draw
+    super
+  end
+end
+
+class ModuleRight < ViewAbstract
+  def initialize(x, y, w, h, col)
+    super
+  end
+
+  def update
+  end
+  
+  def draw
+    super
+  end
+end
+
+class ModuleStatus < ViewAbstract
+  def initialize(x, y, w, h, col)
+    super
+  end
+
+  def update
+  end
+  
+  def draw
+    super
   end
 end
 
