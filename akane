@@ -10,6 +10,9 @@ class Akane
   @@screen = nil
   @@status = nil
   @@config = Hash.new
+  @@alert_flag = false
+  @@inp = nil
+  @@debug_flag = false
   def initialize
     SDL2.init(SDL2::INIT_TIMER|SDL2::INIT_AUDIO|SDL2::INIT_VIDEO|
               SDL2::INIT_EVENTS)
@@ -48,97 +51,46 @@ class Akane
 
   def run(argv)
     if ARGV[0] == "debug"
+      @@debug_flag = true
       File.delete(File.open(@@pref_dir+'config.yaml'))
     end
     font = SDL2::TTF.open(@@config[:font], 20)
 
     bg = Background.new(@@config[:bg_img])
-    inp = Input.new
-    @@status = ModuleStatus.new(0, 400, 640, 80, @@config[:view_bottom_bg_color])
-    module_left = ModuleLeft.new(0, 0, 320, 400, @@config[:view_left_bg_color])
-    module_right = ModuleRight.new(320, 0, 320, 400, @@config[:view_right_bg_color])
+    @@inp = Input.new
+    @@sec_status = SectionStatus.new(0, 400, 640, 80, @@config[:view_bottom_bg_color])
+    sec_dir = SectionDir.new(0, 0, 320, 400, @@config[:view_left_bg_color])
+    sec_pl = SectionPlaylist.new(320, 0, 320, 400, @@config[:view_right_bg_color])
     loop do
       while event = SDL2::Event.poll
-        inp.handle_event(event)
+        @@inp.handle_event(event)
       end
       #update
       bg.update
       #draw
+      @@renderer.viewport = nil
       bg.draw
-      module_left.draw
-      module_right.draw
-      @@status.draw
+      sec_dir.draw
+      sec_pl.draw
+      @@sec_status.draw
       @@renderer.present
-      if inp.quit >= 1
+      if @@inp.quit >= 1
         exit
       end
     end
   end
 end
 
-class ViewAbstract < Akane
-  @rect = nil
-  @col = nil
-  def initialize(x, y, w, h, col)
-    @rect = SDL2::Rect[x, y, w, h]
-    @col = col
-  end
 
-  def update
-  end
 
-  def draw
-    @@renderer.draw_blend_mode = SDL2::BlendMode::BLEND
-    @@renderer.draw_color = [@col[:red],
-                             @col[:green],
-                             @col[:blue],
-                             @col[:alpha]]
-    #TODO viewport?
 
-    @@renderer.fill_rect(@rect)
-  end
-end
-
-class ModuleLeft < ViewAbstract
-  def initialize(x, y, w, h, col)
-    super
-  end
-
-  def update
-  end
-  
-  def draw
-    super
-  end
-end
-
-class ModuleRight < ViewAbstract
-  def initialize(x, y, w, h, col)
-    super
-  end
-
-  def update
-  end
-  
-  def draw
-    super
-  end
-end
-
-class ModuleStatus < ViewAbstract
-  def initialize(x, y, w, h, col)
-    super
-  end
-
-  def update
-  end
-  
-  def draw
-    super
-  end
-end
 
 require "./akane_sound/class.background.rb"
 require "./akane_sound/class.input.rb"
+require "./akane_sound/class.view_base.rb"
+require "./akane_sound/class.upper_section_base.rb"
+require "./akane_sound/class.section_dir.rb"
+require "./akane_sound/class.section_playlist.rb"
+require "./akane_sound/class.section_status.rb"
 
 Akane.new.run(ARGV)

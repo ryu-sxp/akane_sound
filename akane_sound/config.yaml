@@ -7,6 +7,7 @@
 :shuffle: true
 :bg_img: 'FILE_PATH_BG'
 :font: 'FILE_PATH_FONT'
+:root_dir: 'please set'
 :bg_type: 'normal' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
 :bg_color:
     :red: 0
@@ -26,7 +27,7 @@
 :view_bottom_bg_color:
     :red: 0
     :green: 0
-    :blue: 200
+    :blue: 20
     :alpha: 255
 :fg_color:
     :red: 255

@@ -2,7 +2,7 @@ class Background < Akane
   @sprite = nil
   @pos = nil
   def initialize(filepath)
-    surface = SDL2::Surface.load(@@config[:bg_img])
+    surface = SDL2::Surface.load(filepath)
     @sprite = @@renderer.create_texture_from(surface)
     surface.destroy
     case @@config[:bg_type]
