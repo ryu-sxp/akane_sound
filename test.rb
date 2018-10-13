@@ -13,7 +13,7 @@ music = SDL2::Mixer::Music.load(file)
 
 p music.inspect
 
-info = %x( mediainfo "#{file}" )
+info = %x( mediainfo --Inform="Audio;%Duration%" "#{file}" )
 
 p info
 

@@ -1,13 +1,10 @@
 ---
 :window_w: 640
 :window_h: 480
-:volume: 20
-:repeat: true
-:next: true
-:shuffle: true
 :bg_img: 'FILE_PATH_BG'
 :font: 'FILE_PATH_FONT'
-:root_dir: 'please set'
+:font_size: 22
+:root_dir: 'FILE_PATH_ROOT'
 :bg_type: 'normal' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
 :bg_color:
     :red: 0
@@ -48,6 +45,11 @@
     :red: 0
     :green: 155
     :blue: 155
-    alpha: 0
+    :alpha: 0
+:select_bg_color:
+    :red: 255
+    :green: 255
+    :blue: 255
+    :alpha: 0
 
 

@@ -37,6 +37,9 @@ class Input
       else
         @up = 0
       end
+      if event.sym == SDL2::Key::AUDIOMUTE
+        Util.p "lol"
+      end
     end
   end
 end

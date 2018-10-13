@@ -9,6 +9,8 @@ class SectionDir < UpperSectionBase
     else
       @dir = @@config[:root_dir]
     end
+    @dir += '/' unless @dir[-1] == '/'
+    @dir = @@save_data[:cur_dir] if @@save_data[:cur_dir]
     @playlist = set_playlist(@dir)
   end
 
@@ -19,9 +21,11 @@ class SectionDir < UpperSectionBase
     super
   end
 
-  #return: Hash { filename: , dir_flag:, duration: }
+  #return: Array of Hash { filename: , dir_flag:, duration: }
   def set_playlist(dir)
+    ar = Array.new
     Dir.chdir(dir)
+
     dir_contents_dir = Dir.entries(dir).select do |entry|
       if dir == @@config[:root_dir]
         File.directory? File.join(dir, entry) and
@@ -32,6 +36,6 @@ class SectionDir < UpperSectionBase
       end
     end
     p dir_contents.to_s
-    return dir_contents
+    return ar
   end
 end

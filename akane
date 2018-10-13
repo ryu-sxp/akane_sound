@@ -10,6 +10,7 @@ class Akane
   @@screen = nil
   @@status = nil
   @@config = Hash.new
+  @@save_data = Hash.new
   @@alert_flag = false
   @@inp = nil
   @@debug_flag = false
@@ -19,26 +20,9 @@ class Akane
     SDL2::TTF.init
 
     @@pref_dir = SDL2.preference_path("sxp", "akane_sound")
-    unless File.file?(@@pref_dir+"config.yaml")
-      #config[:window_w] = 640
-      #config[:window_h] = 480
-      #config[:bg_img] = ""
-      #yaml = config.to_yaml
-
-      file = File.open("./akane_sound/config.yaml", "r")
-      contents = file.read
-      file.close
-      contents.sub! 'FILE_PATH_BG', @@pref_dir+'akane_bg.png'
-      contents.sub! 'FILE_PATH_FONT', @@pref_dir+'KosugiMaru-Regular.ttf'
-
-      File.open(@@pref_dir+'config.yaml', 'w') { |file| file.write(contents) }
-      @@config = YAML.load(File.open(@@pref_dir+'config.yaml'))
-      Util.binary_copy(@@pref_dir, 'akane_bg.png')
-      Util.binary_copy(@@pref_dir, 'KosugiMaru-Regular.ttf')
-
-    else
-      @@config = YAML.load(File.open(@@pref_dir+'config.yaml'))
-    end
+    Setup::prepare_config
+    Setup::prepare_binary_data('akane_bg.png')
+    Setup::prepare_binary_data('KosugiMaru-Regular.ttf')
     
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
                                    SDL2::Window::POS_CENTERED,
@@ -79,12 +63,13 @@ class Akane
       end
     end
   end
+
+
+  def prepare_save_data
+  end
 end
 
-
-
-
-
+require "./akane_sound/class.setup.rb"
 require "./akane_sound/class.background.rb"
 require "./akane_sound/class.input.rb"
 require "./akane_sound/class.view_base.rb"
