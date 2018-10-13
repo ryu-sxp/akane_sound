@@ -5,6 +5,9 @@ class Input
     @down = 0
     @quit = 0
     @accept = 0
+    @toggle_shuffle = 0
+    @toggle_repeat = 0
+    @toggle_next = 0
   end
 
   def handle_event(event)
@@ -36,6 +39,24 @@ class Input
         @up += 1
       else
         @up = 0
+      end
+      if event.mod == SDL2::Key::Mod::SHIFT && event.sym == SDL2::Key::S
+        @toggle_shuffle += 1        
+        Util.p "toggle_shuffle"
+      else
+        @toggle_shuffle = 0        
+      end
+      if event.mod == SDL2::Key::Mod::SHIFT && event.sym == SDL2::Key::R
+        @toggle_repeat += 1        
+        Util.p "toggle_repeat"
+      else
+        @toggle_repeat = 0        
+      end
+      if event.mod == SDL2::Key::Mod::SHIFT && event.sym == SDL2::Key::N
+        @toggle_next += 1        
+        Util.p "toggle_next"
+      else
+        @toggle_next = 0        
       end
       if event.sym == SDL2::Key::AUDIOMUTE
         Util.p "lol"

@@ -1,7 +1,7 @@
 ---
 :volume: 20
-:repeat: true
-:next: true
-:shuffle: true
+:repeat: false
+:next: false
+:shuffle: false
 :cur_dir: null
 :cur_pl: null

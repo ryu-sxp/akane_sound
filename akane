@@ -21,6 +21,7 @@ class Akane
 
     @@pref_dir = SDL2.preference_path("sxp", "akane_sound")
     Setup::prepare_config
+    Setup::prepare_save_data
     Setup::prepare_binary_data('akane_bg.png')
     Setup::prepare_binary_data('KosugiMaru-Regular.ttf')
     
@@ -37,6 +38,7 @@ class Akane
     if ARGV[0] == "debug"
       @@debug_flag = true
       File.delete(File.open(@@pref_dir+'config.yaml'))
+      File.delete(File.open(@@pref_dir+'save_data.yaml'))
     end
     font = SDL2::TTF.open(@@config[:font], 20)
 
@@ -62,10 +64,6 @@ class Akane
         exit
       end
     end
-  end
-
-
-  def prepare_save_data
   end
 end
 
