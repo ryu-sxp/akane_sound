@@ -3,6 +3,12 @@ require "sdl2"
 require "yaml"
 require "./akane_sound/module.util.rb"
 
+class Integer
+  def bit?(mask)
+    (self & mask) != 0
+  end
+end
+
 class Akane
   @@window = nil
   @@renderer = nil
@@ -53,6 +59,9 @@ class Akane
       end
       #update
       bg.update
+#      if @@inp.up == 1
+#        Util.p "up"
+#      end
       #draw
       @@renderer.viewport = nil
       bg.draw

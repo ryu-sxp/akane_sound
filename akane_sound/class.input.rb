@@ -8,6 +8,12 @@ class Input
     @toggle_shuffle = 0
     @toggle_repeat = 0
     @toggle_next = 0
+    @toggle_mute = 0
+    @vol_up = 0
+    @vol_down = 0
+    @stop = 0
+    @next = 0
+    @refresh = 0
   end
 
   def handle_event(event)
@@ -37,30 +43,71 @@ class Input
       end
       if event.sym == SDL2::Key::K
         @up += 1
+        Util.p "up"
       else
         @up = 0
       end
-      if event.mod == SDL2::Key::Mod::SHIFT && event.sym == SDL2::Key::S
-        @toggle_shuffle += 1        
-        Util.p "toggle_shuffle"
+
+      if event.sym == SDL2::Key::S
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @toggle_shuffle += 1        
+          @stop = 0
+        else
+          @toggle_shuffle = 0        
+          @stop =+ 1
+        end
       else
         @toggle_shuffle = 0        
+        @stop = 0        
       end
-      if event.mod == SDL2::Key::Mod::SHIFT && event.sym == SDL2::Key::R
-        @toggle_repeat += 1        
-        Util.p "toggle_repeat"
-      else
-        @toggle_repeat = 0        
-      end
-      if event.mod == SDL2::Key::Mod::SHIFT && event.sym == SDL2::Key::N
-        @toggle_next += 1        
-        Util.p "toggle_next"
+
+      if event.sym == SDL2::Key::N
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @toggle_next += 1        
+          @next = 0
+        else
+          @toggle_next = 0        
+          @next =+ 1
+        end
       else
         @toggle_next = 0        
+        @next = 0        
       end
-      if event.sym == SDL2::Key::AUDIOMUTE
-        Util.p "lol"
+      
+      if event.sym == SDL2::Key::R
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @toggle_repeat += 1        
+          @refresh = 0
+        else
+          @toggle_repeat = 0        
+          @refresh =+ 1
+        end
+      else
+        @toggle_repeat = 0        
+        @refresh = 0        
       end
+
+      if event.sym == SDL2::Key::PERIOD
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @vol_up += 1        
+        else
+          @vol_up = 0        
+        end
+      else
+        @vol_up = 0        
+      end
+
+      if event.sym == SDL2::Key::COMMA
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @vol_down += 1        
+          Util.p "vol down"
+        else
+          @vol_down = 0        
+        end
+      else
+        @vol_down = 0        
+      end
+
     end
   end
 end
