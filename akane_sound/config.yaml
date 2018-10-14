@@ -3,7 +3,7 @@
 :window_h: 480
 :bg_img: 'FILE_PATH_BG'
 :font: 'FILE_PATH_FONT'
-:font_size: 16
+:font_size: 14
 :root_dir: 'FILE_PATH_ROOT'
 :bg_type: 'repeat' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
 :bg_color:

@@ -30,7 +30,9 @@ class Akane
     Setup::prepare_config
     Setup::prepare_save_data
     Setup::prepare_binary_data('akane_bg.png')
-    Setup::prepare_binary_data('KosugiMaru-Regular.ttf')
+    #Setup::prepare_binary_data('KosugiMaru-Regular.ttf')
+    #Setup::prepare_binary_data('nicokaku_v1.ttf')
+    Setup::prepare_binary_data('TerminusTTF-4.46.0.ttf')
     
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
                                    SDL2::Window::POS_CENTERED,

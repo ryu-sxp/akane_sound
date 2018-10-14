@@ -9,14 +9,14 @@ class SectionDir < UpperSectionBase
   def initialize(x, y, w, h, col)
     super
     if @@debug_flag
-      #@dir = '/media/winhdd/music/'
-      @dir = '/home/ryu/Music/'
+      @dir = '/media/winhdd/music/Unsorted/'
+      #@dir = '/home/ryu/Music/'
     else
       @dir = @@config[:root_dir]
     end
     @dir = @@save_data[:cur_dir] if @@save_data[:cur_dir]
     @playlist = set_playlist(@dir, false)
-    @element_h = (@@config[:font_size] * 1.2).to_i
+    @element_h = (@@config[:font_size] * 1).to_i
     @offset = @element_h / 2
     @view = SDL2::Rect[@offset,
                        @offset,

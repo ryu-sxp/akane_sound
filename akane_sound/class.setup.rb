@@ -5,7 +5,9 @@ class Setup < Akane
       contents = file.read
       file.close
       contents.sub! 'FILE_PATH_BG', @@pref_dir+'akane_bg.png'
-      contents.sub! 'FILE_PATH_FONT', @@pref_dir+'KosugiMaru-Regular.ttf'
+      #contents.sub! 'FILE_PATH_FONT', @@pref_dir+'KosugiMaru-Regular.ttf'
+      contents.sub! 'FILE_PATH_FONT', @@pref_dir+'TerminusTTF-4.46.0.ttf'
+      #contents.sub! 'FILE_PATH_FONT', @@pref_dir+'nicokaku_v1.ttf'
       contents.sub! 'FILE_PATH_ROOT', Dir.home
 
       File.open(@@pref_dir+'config.yaml', 'w') { |file| file.write(contents) }
