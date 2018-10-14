@@ -14,7 +14,7 @@ class Background < Akane
       x = @@config[:window_w]/2-@sprite.w/2
       y = @@config[:window_h]/2-@sprite.h/2
       @pos = SDL2::Rect[x, y, @sprite.w, @sprite.h]
-    when 'tile'
+    when 'repeat'
     when 'fit'
     when 'stretch'
       @pos = nil
@@ -23,7 +23,7 @@ class Background < Akane
   end
 
   def update
-    if @@config[:bg_type] == 'tile'
+    if @@config[:bg_type] == 'repeat'
       @pos = Array.new
       x = y = 0
       while y < @@config[:window_h]
@@ -39,7 +39,7 @@ class Background < Akane
 
   def draw
     unless @@config[:bg_type] == 'none'
-      if @@config[:bg_type] == 'tile'
+      if @@config[:bg_type] == 'repeat'
         @pos.each do |pos|
           @@renderer.copy(@sprite, nil, pos)
         end

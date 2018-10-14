@@ -1,8 +1,11 @@
 class SectionDir < UpperSectionBase
+  @view = nil
   @dir = nil
   @playlist = nil
   @playlist_state = nil
   @cache_flag = false
+  @element_h = nil
+  @offset = nil
   def initialize(x, y, w, h, col)
     super
     if @@debug_flag
@@ -12,6 +15,12 @@ class SectionDir < UpperSectionBase
     end
     @dir = @@save_data[:cur_dir] if @@save_data[:cur_dir]
     @playlist = set_playlist(@dir, false)
+    @element_h = (@@config[:font_size] * 1.5).to_i
+    @offset = @element_h / 2
+    @view = SDL2::Rect[@offset,
+                       @offset,
+                       @view_base.w - @element_h,
+                       @view_base.h - @element_h]
   end
 
   def update
@@ -19,6 +28,13 @@ class SectionDir < UpperSectionBase
   
   def draw
     super
+    @@renderer.viewport = @view
+    @@renderer.draw_blend_mode = SDL2::BlendMode::BLEND
+    @@renderer.draw_color = [@@config[:fg_color][:red],
+                             @@config[:fg_color][:green],
+                             @@config[:fg_color][:blue],
+                             @@config[:fg_color][:alpha]]
+    @@renderer.draw_rect(SDL2::Rect[0, 0, @view.w, @view.h])
   end
 
   #return: Array of Hash { filename: , dir_flag:, duration: }

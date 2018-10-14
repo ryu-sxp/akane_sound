@@ -5,7 +5,7 @@
 :font: 'FILE_PATH_FONT'
 :font_size: 22
 :root_dir: 'FILE_PATH_ROOT'
-:bg_type: 'normal' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
+:bg_type: 'repeat' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
 :bg_color:
     :red: 0
     :green: 0
@@ -15,12 +15,12 @@
     :red: 200
     :green: 0
     :blue: 20
-    :alpha: 255
+    :alpha: 80
 :view_right_bg_color:
     :red: 0
     :green: 200
     :blue: 20
-    :alpha: 255
+    :alpha: 80
 :view_bottom_bg_color:
     :red: 0
     :green: 0
@@ -30,7 +30,7 @@
     :red: 255
     :green: 255
     :blue: 255
-    :alpha: 0
+    :alpha: 255
 :text_color:
     :red: 255
     :green: 255

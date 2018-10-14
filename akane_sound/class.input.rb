@@ -14,6 +14,7 @@ class Input
     @stop = 0
     @next = 0
     @refresh = 0
+    @cmd = 0
   end
 
   def handle_event(event)
@@ -96,6 +97,9 @@ class Input
       else
         @vol_up = 0        
       end
+      if event.sym == SDL2::Key::VOLUMEUP
+        Util.p "vol up lol"
+      end
 
       if event.sym == SDL2::Key::COMMA
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
@@ -106,6 +110,16 @@ class Input
         end
       else
         @vol_down = 0        
+      end
+
+      if event.sym == SDL2::Key::SEMICOLON
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @cmd += 1        
+        else
+          @cmd = 0        
+        end
+      else
+        @cmd = 0        
       end
 
     end

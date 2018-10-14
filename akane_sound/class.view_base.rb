@@ -1,8 +1,8 @@
 class ViewBase < Akane
-  @view = nil
+  @view_base = nil
   @col = nil
   def initialize(x, y, w, h, col)
-    @view = SDL2::Rect[x, y, w, h]
+    @view_base = SDL2::Rect[x, y, w, h]
     @col = col
   end
 
@@ -10,7 +10,7 @@ class ViewBase < Akane
   end
 
   def draw
-    @@renderer.viewport = @view
+    @@renderer.viewport = @view_base
     @@renderer.draw_blend_mode = SDL2::BlendMode::BLEND
     @@renderer.draw_color = [@col[:red],
                              @col[:green],

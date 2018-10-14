@@ -8,6 +8,6 @@ class SectionStatus < ViewBase
   
   def draw
     super
-    @@renderer.fill_rect(SDL2::Rect[0, 0, @view.w, @view.h])
+    @@renderer.fill_rect(SDL2::Rect[0, 0, @view_base.w, @view_base.h])
   end
 end
