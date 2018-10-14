@@ -9,13 +9,14 @@ class SectionDir < UpperSectionBase
   def initialize(x, y, w, h, col)
     super
     if @@debug_flag
-      @dir = '/media/winhdd/music/Unsorted/'
+      #@dir = '/media/winhdd/music/'
+      @dir = '/home/ryu/Music/'
     else
       @dir = @@config[:root_dir]
     end
     @dir = @@save_data[:cur_dir] if @@save_data[:cur_dir]
     @playlist = set_playlist(@dir, false)
-    @element_h = (@@config[:font_size] * 1.5).to_i
+    @element_h = (@@config[:font_size] * 1.2).to_i
     @offset = @element_h / 2
     @view = SDL2::Rect[@offset,
                        @offset,
@@ -28,6 +29,7 @@ class SectionDir < UpperSectionBase
   
   def draw
     super
+    # draw border
     @@renderer.viewport = @view
     @@renderer.draw_blend_mode = SDL2::BlendMode::BLEND
     @@renderer.draw_color = [@@config[:fg_color][:red],
@@ -35,6 +37,20 @@ class SectionDir < UpperSectionBase
                              @@config[:fg_color][:blue],
                              @@config[:fg_color][:alpha]]
     @@renderer.draw_rect(SDL2::Rect[0, 0, @view.w, @view.h])
+    # draw item list
+    i = 0
+    @playlist.each do |item|
+      txt = @@font.render_blended(item[:filename],
+                                  Util.to_col_ar(
+                                    @@config[:text_color]))
+      @@renderer.copy(@@renderer.create_texture_from(txt),
+        nil, SDL2::Rect.new(4,
+                                                             0+(i*@element_h)+(@element_h/2)-(txt.h/2),
+                            txt.w,
+                            txt.h))
+      txt.destroy
+      i += 1
+    end
   end
 
   #return: Array of Hash { filename: , dir_flag:, duration: }

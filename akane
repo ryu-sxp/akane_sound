@@ -20,6 +20,7 @@ class Akane
   @@alert_flag = false
   @@inp = nil
   @@debug_flag = false
+  @@font = nil
   def initialize
     SDL2.init(SDL2::INIT_TIMER|SDL2::INIT_AUDIO|SDL2::INIT_VIDEO|
               SDL2::INIT_EVENTS)
@@ -37,6 +38,7 @@ class Akane
 
     @@renderer = @@window.create_renderer(-1, 0)
     @@screen = SDL2::Rect[0, 0, @@config[:window_w], @@config[:window_h]]
+    @@font = SDL2::TTF.open(@@config[:font], @@config[:font_size])
 
   end
 

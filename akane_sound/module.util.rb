@@ -11,4 +11,10 @@ module Util
                                        str, nil)
     end
   end
+  def Util.to_col_ar(hash)
+    ar = Array.new
+    hash.each { |key, val| ar.push val }
+    ar.pop 1
+    ar
+  end
 end

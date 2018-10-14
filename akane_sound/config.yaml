@@ -3,7 +3,7 @@
 :window_h: 480
 :bg_img: 'FILE_PATH_BG'
 :font: 'FILE_PATH_FONT'
-:font_size: 22
+:font_size: 16
 :root_dir: 'FILE_PATH_ROOT'
 :bg_type: 'repeat' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
 :bg_color:
@@ -35,7 +35,7 @@
     :red: 255
     :green: 255
     :blue: 255
-    :alpha: 0
+    :alpha: 255
 :volume_bar_color:
     :red: 0
     :green: 255
