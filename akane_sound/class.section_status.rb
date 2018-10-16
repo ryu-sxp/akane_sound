@@ -5,6 +5,10 @@ class SectionStatus < ViewBase
 
   def update
   end
+
+  def update_size(x, y, w, h)
+    super
+  end
   
   def draw
     super

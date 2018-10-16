@@ -10,17 +10,24 @@ class Integer
 end
 
 class Akane
-  @@window = nil
-  @@renderer = nil
-  @@pref_dir = nil
-  @@screen = nil
-  @@status = nil
-  @@config = Hash.new
-  @@save_data = Hash.new
+  @@window     = nil
+  @@win_w      = 0
+  @@win_h      = 0
+  @@renderer   = nil
+  @@pref_dir   = nil
+  @@screen     = nil
+  @@status     = nil
+  @@config     = Hash.new
+  @@save_data  = Hash.new
   @@alert_flag = false
-  @@inp = nil
+  @@inp        = nil
   @@debug_flag = false
-  @@font = nil
+  @@font       = nil
+  @@font_bold  = nil
+  @@music      = nil
+  @@cmd_flag   = false
+  @@sleep_flag = false
+  @@tstmp_now  = nil
   def initialize
     SDL2.init(SDL2::INIT_TIMER|SDL2::INIT_AUDIO|SDL2::INIT_VIDEO|
               SDL2::INIT_EVENTS)
@@ -30,17 +37,20 @@ class Akane
     Setup::prepare_config
     Setup::prepare_save_data
     Setup::prepare_binary_data('akane_bg.png')
-    #Setup::prepare_binary_data('KosugiMaru-Regular.ttf')
-    #Setup::prepare_binary_data('nicokaku_v1.ttf')
-    Setup::prepare_binary_data('TerminusTTF-4.46.0.ttf')
+    Setup::prepare_binary_data('NotoSansMonoCJKjp-Regular.otf')
+    Setup::prepare_binary_data('NotoSansCJKjp-DemiLight.otf')
     
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
                                    SDL2::Window::POS_CENTERED,
-                                   @@config[:window_w], @@config[:window_h], 0)
+                                   @@config[:window_w], @@config[:window_h],
+                                   SDL2::Window::Flags::RESIZABLE)
+    @@win_w = @@window.size[0]
+    @@win_h = @@window.size[1]
 
     @@renderer = @@window.create_renderer(-1, 0)
     @@screen = SDL2::Rect[0, 0, @@config[:window_w], @@config[:window_h]]
     @@font = SDL2::TTF.open(@@config[:font], @@config[:font_size])
+    @@font_bold = SDL2::TTF.open(@@config[:font_big], @@config[:font_size])
 
   end
 
@@ -54,27 +64,54 @@ class Akane
 
     bg = Background.new(@@config[:bg_img])
     @@inp = Input.new
-    @@sec_status = SectionStatus.new(0, 400, 640, 80, @@config[:view_bottom_bg_color])
-    sec_dir = SectionDir.new(0, 0, 320, 400, @@config[:view_left_bg_color])
-    sec_pl = SectionPlaylist.new(320, 0, 320, 400, @@config[:view_right_bg_color])
+    @@sec_status = SectionStatus.new(0, @@config[:window_h]-80,
+                                     @@config[:window_w], 80,
+                                     @@config[:view_bottom_bg_color])
+    sec_dir = SectionDir.new(0, 0, @@config[:window_w]/2,
+                             @@config[:window_h]-80,
+                             @@config[:view_left_bg_color])
+    sec_pl = SectionPlaylist.new(@@config[:window_w]/2, 0,
+                                 @@config[:window_w]/2, @@config[:window_h]-80,
+                                 @@config[:view_right_bg_color])
     loop do
       while event = SDL2::Event.poll
         @@inp.handle_event(event)
       end
       #update
-      bg.update
-#      if @@inp.up == 1
-#        Util.p "up"
-#      end
+      if @@window.size[0] != @@win_w || @@window.size[1] != @@win_h
+        @@win_w = @@window.size[0]
+        @@win_h = @@window.size[1]
+        @@screen = SDL2::Rect[0, 0, @@win_w, @@win_h]
+        bg.update
+        sec_dir.update_size(0, 0, @@win_w/2, @@win_h-80)
+        sec_pl.update_size(@@win_w/2, 0, @@win_w/2, @@win_h-80)
+        @@sec_status.update_size(0, @@win_h-80, @@win_w, 80)
+      else
+        bg.update
+      end
+      sleep_check
       #draw
       @@renderer.viewport = nil
       bg.draw
-      sec_dir.draw
-      sec_pl.draw
+      unless @@sleep_flag
+        sec_dir.draw
+        sec_pl.draw
+      end
       @@sec_status.draw
       @@renderer.present
       if @@inp.quit >= 1
         exit
+      end
+    end
+  end
+
+  private
+
+  def sleep_check
+    @@tstmp_now = SDL2.get_ticks
+    if @@config[:sleep_timer] > 0
+      if (@@tstmp_now-@@inp.tstmp_last_input) >= @@config[:sleep_timer]*1000
+        @@sleep_flag = true
       end
     end
   end

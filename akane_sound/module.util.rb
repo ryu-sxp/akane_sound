@@ -17,4 +17,15 @@ module Util
     ar.pop 1
     ar
   end
+  def Util.ms_to_time_str(ms)
+    sec = ms.to_f/1000.0
+    min = sec/60.0
+    sec = ((min%60.0).round(2)*10).to_i
+    if min < 10
+      min = "0#{min.floor}"
+    else
+      min = min.floor
+    end
+    "#{min}:#{sec}"
+  end
 end

@@ -1,62 +1,33 @@
 class SectionDir < UpperSectionBase
-  @view = nil
-  @dir = nil
-  @playlist = nil
-  @playlist_state = nil
-  @cache_flag = false
-  @element_h = nil
-  @offset = nil
   def initialize(x, y, w, h, col)
-    super
     if @@debug_flag
-      @dir = '/media/winhdd/music/Unsorted/'
-      #@dir = '/home/ryu/Music/'
+      #@dir = '/media/winhdd/music/Unsorted/'
+      @dir = '/home/ryu/Music/Unsorted/'
     else
       @dir = @@config[:root_dir]
     end
     @dir = @@save_data[:cur_dir] if @@save_data[:cur_dir]
     @playlist = set_playlist(@dir, false)
-    @element_h = (@@config[:font_size] * 1).to_i
-    @offset = @element_h / 2
-    @view = SDL2::Rect[@offset,
-                       @offset,
-                       @view_base.w - @element_h,
-                       @view_base.h - @element_h]
+    @playlist_state = nil
+    @cache_flag = false
+    super
   end
 
   def update
   end
+
+  def update_size(x, y, w, h)
+    super
+  end
   
   def draw
     super
-    # draw border
-    @@renderer.viewport = @view
-    @@renderer.draw_blend_mode = SDL2::BlendMode::BLEND
-    @@renderer.draw_color = [@@config[:fg_color][:red],
-                             @@config[:fg_color][:green],
-                             @@config[:fg_color][:blue],
-                             @@config[:fg_color][:alpha]]
-    @@renderer.draw_rect(SDL2::Rect[0, 0, @view.w, @view.h])
-    # draw item list
-    i = 0
-    @playlist.each do |item|
-      txt = @@font.render_blended(item[:filename],
-                                  Util.to_col_ar(
-                                    @@config[:text_color]))
-      @@renderer.copy(@@renderer.create_texture_from(txt),
-        nil, SDL2::Rect.new(4,
-                                                             0+(i*@element_h)+(@element_h/2)-(txt.h/2),
-                            txt.w,
-                            txt.h))
-      txt.destroy
-      i += 1
-    end
   end
 
   #return: Array of Hash { filename: , dir_flag:, duration: }
   def set_playlist(dir, refresh)
     ar = Array.new
-    dir_contents_dir = Dir.entries(dir).select do |entry|
+    dir_contents_dir = Dir.entries(dir).sort.select do |entry|
       if dir == @@config[:root_dir]
         File.directory?(File.join(dir, entry)) and
           !(entry == '.' || entry == '..')
@@ -67,9 +38,9 @@ class SectionDir < UpperSectionBase
     end
     dir_contents_dir.each do |entry|
       ar.push({ filename: entry+'/', dir_flag: true, duration: nil, bps: nil,
-                br: nil })
+                br: nil, artist: nil, album: nil, pl_time: nil })
     end
-    dir_contents_file = Dir.entries(dir).select do |entry|
+    dir_contents_file = Dir.entries(dir).sort.select do |entry|
       !File.directory?(File.join(dir, entry)) and
         (/\.mp3|ogg|m4a|wav|mid|flac\z/ === entry)
     end
@@ -77,10 +48,17 @@ class SectionDir < UpperSectionBase
       dur = %x( mediainfo --Inform="Audio;%Duration%" "#{dir+entry}" )
       bps = %x( mediainfo --Inform="Audio;%BitRate%" "#{dir+entry}" )
       br  = %x( mediainfo --Inform="Audio;%BitRate_Mode%" "#{dir+entry}" )
+      artist = %x(ffprobe -loglevel error -show_entries format_tags=artist -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
+      album = %x(ffprobe -loglevel error -show_entries format_tags=album -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
+      artist.delete!("\n")
+      album.delete!("\n")
+      pltime = '['+Util.ms_to_time_str(dur.to_i)+']'
       ar.push({ filename: entry, dir_flag: false, duration: dur.to_i,
-                bps: bps.to_i, br: br[0..2] })
+                bps: bps.to_i, br: br[0..2], artist: artist, album: album,
+                pl_time: pltime })
     end
     p ar.to_s if @@debug_flag
     return ar
   end
+
 end

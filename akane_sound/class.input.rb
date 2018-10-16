@@ -1,5 +1,5 @@
-class Input
-  attr_accessor :up, :down, :quit
+class Input < Akane
+  attr_accessor :up, :down, :quit, :tstmp_last_input, :accept
   def initialize
     @up = 0
     @down = 0
@@ -15,6 +15,7 @@ class Input
     @next = 0
     @refresh = 0
     @cmd = 0
+    @tstmp_last_input = SDL2.get_ticks
   end
 
   def handle_event(event)
@@ -22,6 +23,11 @@ class Input
     when SDL2::Event::Quit
       @quit += 1
     when SDL2::Event::KeyDown
+      @tstmp_last_input = SDL2.get_ticks
+      if @@sleep_flag
+        @@sleep_flag = false
+        return
+      end
       if event.sym == SDL2::Key::ESCAPE
         @quit += 1
       else
@@ -44,7 +50,6 @@ class Input
       end
       if event.sym == SDL2::Key::K
         @up += 1
-        Util.p "up"
       else
         @up = 0
       end
@@ -98,7 +103,6 @@ class Input
         @vol_up = 0        
       end
       if event.sym == SDL2::Key::VOLUMEUP
-        Util.p "vol up lol"
       end
 
       if event.sym == SDL2::Key::COMMA
