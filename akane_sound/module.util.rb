@@ -26,6 +26,7 @@ module Util
     else
       min = min.floor
     end
+    sec = '00' if sec == 100
     "#{min}:#{sec}"
   end
 end

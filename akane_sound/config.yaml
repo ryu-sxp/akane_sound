@@ -13,7 +13,7 @@
     :red: 0
     :green: 0
     :blue: 20
-    :alpha: 155
+    :alpha: 225
 :view_left_bg_color:
     :red: 200
     :green: 0
@@ -38,6 +38,11 @@
     :red: 255
     :green: 255
     :blue: 255
+    :alpha: 255
+:text_color_disabled:
+    :red: 120
+    :green: 120
+    :blue: 120
     :alpha: 255
 :volume_bar_color:
     :red: 0

@@ -12,6 +12,8 @@ class UpperSectionBase < ViewBase
                        @view_base.y+@offset,
                        @view_base.w - @offset*2,
                        view_height]
+    @txt_color   = Util.to_col_ar(@@config[:text_color])
+    @txt_col_dis = Util.to_col_ar(@@config[:text_color_disabled])
   end
 
   def update
@@ -46,9 +48,11 @@ class UpperSectionBase < ViewBase
     @@renderer.viewport = @view
     # draw item list
     i = 0
+    txtcol = (@focus_flag) ? @txt_col : @txt_col_dis
     @playlist.each do |item|
       unless item[:dir_flag]
-        dur = @@font_bold.render_blended(item[:pl_time],
+        dur = @@font.render_blended(
+                                    item[:tag],
                                     Util.to_col_ar(
                                       @@config[:text_color]))
       end
@@ -56,18 +60,27 @@ class UpperSectionBase < ViewBase
                                   Util.to_col_ar(
                                     @@config[:text_color]))
       unless item[:dir_flag]
-        #TODO if view - dur.w > txt.w then decrease txt.w by what's necessary
-        sprite_w = txt.w
+        overshoot = ((@view.w-8)-dur.w-4)
+        if txt.w >= overshoot
+          sprite_w = txt.w-(txt.w-overshoot)
+        else
+          sprite_w = txt.w
+        end
         sprite_h = txt.h
       else
         sprite_w = txt.w
         sprite_h = txt.h
       end
+      y = 0+(i*@element_h)+(@element_h/2)-(sprite_h/2)
       @@renderer.copy(@@renderer.create_texture_from(txt),
                       SDL2::Rect[0, 0, sprite_w, sprite_h],
-                      SDL2::Rect[4, 0+(i*@element_h)+(@element_h/2)-(sprite_h/2),
-                            sprite_w,
-                            sprite_h])
+                      SDL2::Rect[4, y, sprite_w, sprite_h])
+      unless item[:dir_flag]
+        @@renderer.copy(@@renderer.create_texture_from(dur),
+                        nil,
+                        SDL2::Rect[(@view.w-dur.w)-4, y, dur.w, dur.h])
+        dur.destroy
+      end
       txt.destroy
       i += 1
     end

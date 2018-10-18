@@ -1,5 +1,6 @@
 class SectionDir < UpperSectionBase
   def initialize(x, y, w, h, col)
+    @focus_flag = @@save_data[:focus_left]
     if @@debug_flag
       #@dir = '/media/winhdd/music/Unsorted/'
       @dir = '/home/ryu/Music/Unsorted/'
@@ -7,7 +8,9 @@ class SectionDir < UpperSectionBase
       @dir = @@config[:root_dir]
     end
     @dir = @@save_data[:cur_dir] if @@save_data[:cur_dir]
+    @tracks = 0
     @playlist = set_playlist(@dir, false)
+    @tracks_played = 0
     @playlist_state = nil
     @cache_flag = false
     super
@@ -38,7 +41,8 @@ class SectionDir < UpperSectionBase
     end
     dir_contents_dir.each do |entry|
       ar.push({ filename: entry+'/', dir_flag: true, duration: nil, bps: nil,
-                br: nil, artist: nil, album: nil, pl_time: nil })
+                br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
+                tag: nil })
     end
     dir_contents_file = Dir.entries(dir).sort.select do |entry|
       !File.directory?(File.join(dir, entry)) and
@@ -52,10 +56,13 @@ class SectionDir < UpperSectionBase
       album = %x(ffprobe -loglevel error -show_entries format_tags=album -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
       artist.delete!("\n")
       album.delete!("\n")
-      pltime = '['+Util.ms_to_time_str(dur.to_i)+']'
+      pltime = Util.ms_to_time_str(dur.to_i)
+      type = entry[-3..-1].upcase
+      tag = '['+pltime+'|'+type+']'
       ar.push({ filename: entry, dir_flag: false, duration: dur.to_i,
                 bps: bps.to_i, br: br[0..2], artist: artist, album: album,
-                pl_time: pltime })
+                pl_time: pltime, type: type, tag: tag })
+      @tracks += 1
     end
     p ar.to_s if @@debug_flag
     return ar

@@ -1,5 +1,6 @@
 class SectionPlaylist < UpperSectionBase
   def initialize(x, y, w, h, col)
+    @focus_flag = @@save_data[:focus_right]
     @playlist = Array.new
     super
   end

@@ -5,3 +5,5 @@
 :shuffle: false
 :cur_dir: null
 :cur_pl: null
+:focus_left: true
+:focus_right: false
