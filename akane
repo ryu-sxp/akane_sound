@@ -34,10 +34,15 @@ class Akane
     SDL2::TTF.init
 
     @@pref_dir = SDL2.preference_path("sxp", "akane_sound")
+    if ARGV[0] == "debug"
+      @@debug_flag = true
+      File.delete(File.open(@@pref_dir+'config.yaml'))
+      File.delete(File.open(@@pref_dir+'save_data.yaml'))
+    end
     Setup::prepare_config
     Setup::prepare_save_data
     Setup::prepare_binary_data('akane_bg.png')
-    Setup::prepare_binary_data('NotoSansMonoCJKjp-Regular.otf')
+    Setup::prepare_binary_data('NotoSansCJKjp-Regular.otf')
     Setup::prepare_binary_data('NotoSansCJKjp-DemiLight.otf')
     
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
@@ -58,13 +63,6 @@ class Akane
   end
 
   def run(argv)
-    if ARGV[0] == "debug"
-      @@debug_flag = true
-      File.delete(File.open(@@pref_dir+'config.yaml'))
-      File.delete(File.open(@@pref_dir+'save_data.yaml'))
-    end
-    font = SDL2::TTF.open(@@config[:font], 20)
-
     bg = Background.new(@@config[:bg_img])
     @@inp = Input.new
     @@sec_status = SectionStatus.new(0, @@config[:window_h]-80,

@@ -2,8 +2,8 @@ class SectionDir < UpperSectionBase
   def initialize(x, y, w, h, col)
     @focus_flag = @@save_data[:focus_left]
     if @@debug_flag
-      #@dir = '/media/winhdd/music/Unsorted/'
-      @dir = '/home/ryu/Music/Unsorted/'
+      @dir = '/media/winhdd/music/Unsorted/'
+      #@dir = '/home/ryu/Music/Unsorted/'
     else
       @dir = @@config[:root_dir]
     end

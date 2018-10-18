@@ -51,7 +51,7 @@ class UpperSectionBase < ViewBase
     txtcol = (@focus_flag) ? @txt_col : @txt_col_dis
     @playlist.each do |item|
       unless item[:dir_flag]
-        dur = @@font.render_blended(
+        dur = @@font_bold.render_blended(
                                     item[:tag],
                                     Util.to_col_ar(
                                       @@config[:text_color]))
