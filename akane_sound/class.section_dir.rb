@@ -13,10 +13,12 @@ class SectionDir < UpperSectionBase
     @tracks_played = 0
     @playlist_state = nil
     @cache_flag = false
+    @pointer = @@save_data[:pointer_left]
     super
   end
 
   def update
+    super
   end
 
   def update_size(x, y, w, h)

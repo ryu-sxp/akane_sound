@@ -43,7 +43,7 @@ class Akane
     Setup::prepare_save_data
     Setup::prepare_binary_data('akane_bg.png')
     Setup::prepare_binary_data('NotoSansCJKjp-Regular.otf')
-    Setup::prepare_binary_data('NotoSansCJKjp-DemiLight.otf')
+    Setup::prepare_binary_data('NotoSansCJKjp-Medium.otf')
     
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
                                    SDL2::Window::POS_CENTERED,
@@ -107,6 +107,7 @@ class Akane
       end
       @@sec_status.draw
       @@renderer.present
+      #GC.start
       wait_fps
     end
   end

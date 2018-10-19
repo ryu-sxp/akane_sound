@@ -43,6 +43,7 @@ class Input < Akane
       else
         @accept = 0
       end
+
       if event.sym == SDL2::Key::J
         @down += 1
       else
@@ -125,7 +126,22 @@ class Input < Akane
       else
         @cmd = 0        
       end
-
+    when SDL2::Event::KeyUp
+      @up = 0
+      @down = 0
+      @quit = 0
+      @accept = 0
+      @toggle_shuffle = 0
+      @toggle_repeat = 0
+      @toggle_next = 0
+      @toggle_mute = 0
+      @vol_up = 0
+      @vol_down = 0
+      @stop = 0
+      @next = 0
+      @refresh = 0
+      @cmd = 0
     end
   end
+
 end
