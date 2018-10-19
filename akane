@@ -144,6 +144,7 @@ class Akane
   end
 end
 
+require "./akane_sound/class.element.rb"
 require "./akane_sound/class.setup.rb"
 require "./akane_sound/class.background.rb"
 require "./akane_sound/class.input.rb"

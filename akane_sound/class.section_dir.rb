@@ -42,7 +42,7 @@ class SectionDir < UpperSectionBase
     dir_contents_dir.each do |entry|
       ar.push({ filename: entry+'/', dir_flag: true, duration: nil, bps: nil,
                 br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
-                tag: nil })
+                tag: nil, title: nil })
     end
     dir_contents_file = Dir.entries(dir).sort.select do |entry|
       !File.directory?(File.join(dir, entry)) and
@@ -54,14 +54,16 @@ class SectionDir < UpperSectionBase
       br  = %x( mediainfo --Inform="Audio;%BitRate_Mode%" "#{dir+entry}" )
       artist = %x(ffprobe -loglevel error -show_entries format_tags=artist -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
       album = %x(ffprobe -loglevel error -show_entries format_tags=album -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
+      title = %x(ffprobe -loglevel error -show_entries format_tags=title -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
       artist.delete!("\n")
+      title.delete!("\n")
       album.delete!("\n")
       pltime = Util.ms_to_time_str(dur.to_i)
       type = entry[-3..-1].upcase
       tag = '['+pltime+'|'+type+']'
       ar.push({ filename: entry, dir_flag: false, duration: dur.to_i,
                 bps: bps.to_i, br: br[0..2], artist: artist, album: album,
-                pl_time: pltime, type: type, tag: tag })
+                pl_time: pltime, type: type, tag: tag, title: title })
       @tracks += 1
     end
     p ar.to_s if @@debug_flag

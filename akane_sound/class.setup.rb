@@ -6,7 +6,7 @@ class Setup < Akane
       file.close
       contents.sub! 'FILE_PATH_BG', @@pref_dir+'akane_bg.png'
       contents.sub! 'FILE_PATH_FONT_BIG', @@pref_dir+'NotoSansCJKjp-Regular.otf'
-      contents.sub! 'FILE_PATH_FONT', @@pref_dir+'NotoSansCJKjp-DemiLight.otf'
+      contents.sub! 'FILE_PATH_FONT', @@pref_dir+'NotoSansCJKjp-Regular.otf'
       contents.sub! 'FILE_PATH_ROOT', Dir.home
 
       File.open(@@pref_dir+'config.yaml', 'w') { |file| file.write(contents) }
