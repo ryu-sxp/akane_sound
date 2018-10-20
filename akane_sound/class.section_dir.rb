@@ -14,6 +14,7 @@ class SectionDir < UpperSectionBase
     @playlist_state = nil
     @cache_flag = false
     @pointer = @@save_data[:pointer_left]
+    @page = @@save_data[:page_left]
     super
   end
 

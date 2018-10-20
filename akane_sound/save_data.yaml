@@ -1,6 +1,8 @@
 ---
 :pointer_left: 0
 :pointer_right: 0
+:page_left: 0
+:page_right: 0
 :volume: 20
 :repeat: false
 :next: false

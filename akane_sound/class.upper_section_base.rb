@@ -22,13 +22,25 @@ class UpperSectionBase < ViewBase
 
   def update
     if @focus_flag && !@@sleep_flag
-      if @@inp.down == 1
-        @pointer += 1
-        update_element_positions
+      if @@inp.down == 1 || @@inp.down >= 20
+        if @@inp.down == 1
+          @pointer = (@pointer+1) % @elements.length
+          update_element_positions
+        elsif @@inp.down == 22
+          @pointer = (@pointer+1) % @elements.length
+          update_element_positions
+          @@inp.down = 20
+        end
       end
-      if @@inp.up == 1
-        @pointer -= 1
-        update_element_positions
+      if @@inp.up == 1 || @@inp.up >= 20
+        if @@inp.up == 1
+          @pointer = (@pointer+(@elements.length-1)) % @elements.length
+          update_element_positions
+        elsif @@inp.up == 22
+          @pointer = (@pointer+(@elements.length-1)) % @elements.length
+          update_element_positions
+          @@inp.up = 20
+        end
       end
     end
   end
