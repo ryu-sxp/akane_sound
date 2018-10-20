@@ -79,6 +79,7 @@ class Akane
       while event = SDL2::Event.poll
         @@inp.handle_event(event)
       end
+      @@inp.set_state
       #update
       if @@inp.quit >= 1
         exit

@@ -1,20 +1,20 @@
 class Input < Akane
   attr_accessor :up, :down, :quit, :tstmp_last_input, :accept
   def initialize
-    @up = 0
-    @down = 0
-    @quit = 0
-    @accept = 0
-    @toggle_shuffle = 0
-    @toggle_repeat = 0
-    @toggle_next = 0
-    @toggle_mute = 0
-    @vol_up = 0
-    @vol_down = 0
-    @stop = 0
-    @next = 0
-    @refresh = 0
-    @cmd = 0
+    @tmp_up, @up = 0
+    @tmp_down, @down = 0
+    @tmp_quit, @quit = 0
+    @tmp_accept, @accept = 0
+    @tmp_toggle_shuffle, @toggle_shuffle = 0
+    @tmp_toggle_repeat, @toggle_repeat = 0
+    @tmp_toggle_next, @toggle_next = 0
+    @tmp_toggle_mute, @toggle_mute = 0
+    @tmp_vol_up, @vol_up = 0
+    @tmp_vol_down, @vol_down = 0
+    @tmp_stop, @stop = 0
+    @tmp_next, @next = 0
+    @tmp_refresh, @refresh = 0
+    @tmp_cmd, @cmd = 0
     @tstmp_last_input = SDL2.get_ticks
   end
 
@@ -29,117 +29,187 @@ class Input < Akane
         return
       end
       if event.sym == SDL2::Key::ESCAPE
-        @quit += 1
-      else
-        @quit = 0
+        @tmp_quit = 1
       end
       if event.sym == SDL2::Key::RETURN
-        @accept += 1
-      else
-        @accept = 0
+        @tmp_accept = 1
       end
       if event.sym == SDL2::Key::SPACE
-        @accept += 1
-      else
-        @accept = 0
+        @tmp_accept = 1
       end
 
       if event.sym == SDL2::Key::J
-        @down += 1
-      else
-        @down = 0
+        @tmp_down = 1
       end
       if event.sym == SDL2::Key::K
-        @up += 1
-      else
-        @up = 0
+        @tmp_up = 1
       end
 
       if event.sym == SDL2::Key::S
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
-          @toggle_shuffle += 1        
-          @stop = 0
+          @tmp_toggle_shuffle = 1        
         else
-          @toggle_shuffle = 0        
-          @stop =+ 1
+          @tmp_stop = 1
         end
-      else
-        @toggle_shuffle = 0        
-        @stop = 0        
       end
 
       if event.sym == SDL2::Key::N
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
-          @toggle_next += 1        
-          @next = 0
+          @tmp_toggle_next = 1        
         else
-          @toggle_next = 0        
-          @next =+ 1
+          @tmp_next = 1
         end
-      else
-        @toggle_next = 0        
-        @next = 0        
       end
       
       if event.sym == SDL2::Key::R
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
-          @toggle_repeat += 1        
-          @refresh = 0
+          @tmp_toggle_repeat = 1        
         else
-          @toggle_repeat = 0        
-          @refresh =+ 1
+          @tmp_refresh = 1
         end
-      else
-        @toggle_repeat = 0        
-        @refresh = 0        
       end
 
       if event.sym == SDL2::Key::PERIOD
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
-          @vol_up += 1        
-        else
-          @vol_up = 0        
+          @tmp_vol_up = 1        
         end
-      else
-        @vol_up = 0        
       end
       if event.sym == SDL2::Key::VOLUMEUP
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @tmp_vol_up = 1        
+        end
       end
 
       if event.sym == SDL2::Key::COMMA
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
-          @vol_down += 1        
-          Util.p "vol down"
-        else
-          @vol_down = 0        
+          @tmp_vol_down = 1        
         end
-      else
-        @vol_down = 0        
       end
 
       if event.sym == SDL2::Key::SEMICOLON
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
-          @cmd += 1        
-        else
-          @cmd = 0        
+          @tmp_cmd = 1        
         end
-      else
-        @cmd = 0        
       end
     when SDL2::Event::KeyUp
-      @up = 0
-      @down = 0
+      if event.sym == SDL2::Key::ESCAPE
+        @tmp_quit = 0
+      end
+      if event.sym == SDL2::Key::RETURN
+        @tmp_accept = 0
+      end
+      if event.sym == SDL2::Key::SPACE
+        @tmp_accept = 0
+      end
+
+      if event.sym == SDL2::Key::J
+        @tmp_down = 0
+      end
+      if event.sym == SDL2::Key::K
+        @tmp_up = 0
+      end
+
+      if event.sym == SDL2::Key::S
+        @tmp_toggle_shuffle = 0
+        @tmp_stop = 0
+      end
+
+      if event.sym == SDL2::Key::N
+        @tmp_toggle_next = 0
+        @tmp_next = 0
+      end
+      
+      if event.sym == SDL2::Key::R
+        @tmp_toggle_repeat = 0
+        @tmp_refresh = 0
+      end
+
+      if event.sym == SDL2::Key::PERIOD
+        @tmp_vol_up = 0
+      end
+      if event.sym == SDL2::Key::VOLUMEUP
+        @tmp_vol_up = 0
+      end
+
+      if event.sym == SDL2::Key::COMMA
+        @tmp_vol_down = 0
+      end
+
+      if event.sym == SDL2::Key::SEMICOLON
+        @tmp_cmd = 0
+      end
+    end
+  end
+
+  def set_state
+    if @tmp_quit == 1
+      @quit += 1
+    else
       @quit = 0
+    end
+    if @tmp_up == 1
+      @up += 1
+    else
+      @up = 0
+    end
+    if @tmp_down == 1
+      @down += 1
+    else
+      @down = 0
+    end
+    if @tmp_accept == 1
+      @accept += 1
+    else
       @accept = 0
+    end
+    if @tmp_toggle_shuffle == 1
+      @toggle_shuffle += 1
+    else
       @toggle_shuffle = 0
+    end
+    if @tmp_toggle_repeat == 1
+      @toggle_repeat += 1
+    else
       @toggle_repeat = 0
+    end
+    if @tmp_toggle_next == 1
+      @toggle_next += 1
+    else
       @toggle_next = 0
+    end
+    if @tmp_toggle_mute == 1
+      @toggle_mute += 1
+    else
       @toggle_mute = 0
+    end
+    if @tmp_vol_up == 1
+      @vol_up += 1
+    else
       @vol_up = 0
+    end
+    if @tmp_vol_down == 1
+      @vol_down += 1
+    else
       @vol_down = 0
+    end
+    if @tmp_stop == 1
+      @stop += 1
+    else
       @stop = 0
+    end
+    if @tmp_next == 1
+      @next += 1
+    else
       @next = 0
+    end
+    if @tmp_refresh == 1
+      @refresh += 1
+    else
       @refresh = 0
+    end
+    if @tmp_cmd == 1
+      @cmd += 1
+    else
       @cmd = 0
     end
   end
