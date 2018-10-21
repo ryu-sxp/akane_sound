@@ -4,6 +4,8 @@ class SectionPlaylist < UpperSectionBase
     @playlist = Array.new
     @pointer = @@save_data[:pointer_right]
     @page = @@save_data[:page_right]
+    @offset_left = 4
+    @offset_right = 8
     super
   end
 

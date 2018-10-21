@@ -95,8 +95,14 @@ class Akane
       else
         bg.update
       end
-      sec_dir.update
-      sec_pl.update
+      unless @@sleep_flag
+        sec_dir.update
+        sec_pl.update
+      else
+        if @@inp.any_key != 0
+          @@sleep_flag = false
+        end
+      end
       @@sec_status.update
       sleep_check
       #draw

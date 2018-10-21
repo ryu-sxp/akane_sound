@@ -8,10 +8,7 @@ class UpperSectionBase < ViewBase
     @element_h = (@@config[:font_size] * @@config[:line_height_mod]).to_i
     @offset = @element_h
     @max_elements = 0
-    @view = SDL2::Rect[@view_base.x+@offset,
-                       @view_base.y+@offset,
-                       @view_base.w - @offset*2,
-                       view_height]
+    set_view
     @txt_color   = Util.to_col_ar(@@config[:text_color])
     @txt_col_dis = Util.to_col_ar(@@config[:text_color_disabled])
     @elements = Array.new
@@ -22,7 +19,7 @@ class UpperSectionBase < ViewBase
   end
 
   def update
-    if @focus_flag && !@@sleep_flag
+    if @focus_flag
       if @@inp.down == 1 || @@inp.down >= 20
         if @@inp.down == 1
           @pointer = (@pointer+1) % @elements.length
@@ -68,10 +65,7 @@ class UpperSectionBase < ViewBase
   def update_size(x, y, w, h)
     super
     @max_elements = 0
-    @view = SDL2::Rect[@view_base.x+@offset,
-                       @view_base.y+@offset,
-                       @view_base.w - @offset*2,
-                       view_height]
+    set_view
     set_page
     update_element_strings
     update_element_positions
@@ -179,6 +173,13 @@ class UpperSectionBase < ViewBase
   end
 
   private
+
+  def set_view
+    @view = SDL2::Rect[@view_base.x+@offset_left,
+                       @view_base.y+@offset,
+                       @view_base.w - (@offset_left+@offset_right),
+                       view_height]
+  end
 
   def view_height
     height = 0

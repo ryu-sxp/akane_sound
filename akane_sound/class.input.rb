@@ -1,6 +1,6 @@
 class Input < Akane
   attr_accessor :up, :down, :quit, :tstmp_last_input, :accept, :pageup,
-    :pagedown
+    :pagedown, :any_key
   def initialize
     @tmp_up, @up = 0
     @tmp_down, @down = 0
@@ -18,19 +18,16 @@ class Input < Akane
     @tmp_next, @next = 0
     @tmp_refresh, @refresh = 0
     @tmp_cmd, @cmd = 0
+    @any_key = 0
     @tstmp_last_input = SDL2.get_ticks
   end
 
   def handle_event(event)
     case event
     when SDL2::Event::Quit
-      @quit += 1
+      @quit = 1
     when SDL2::Event::KeyDown
       @tstmp_last_input = SDL2.get_ticks
-      if @@sleep_flag
-        @@sleep_flag = false
-        return
-      end
       if event.sym == SDL2::Key::ESCAPE
         @tmp_quit = 1
       end
@@ -239,6 +236,23 @@ class Input < Akane
     else
       @cmd = 0
     end
+    @any_key =
+    @up+
+    @down+
+    @pageup+
+    @pagedown+
+    @quit+
+    @accept+
+    @toggle_shuffle+
+    @toggle_repeat+
+    @toggle_next+
+    @toggle_mute+
+    @vol_up+
+    @vol_down+
+    @stop+
+    @next+
+    @refresh+
+    @cmd
   end
 
 end

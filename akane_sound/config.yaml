@@ -1,7 +1,7 @@
 ---
 :window_w: 640
 :window_h: 480
-:sleep_timer: 0 # seconds without input until player goes into sleep. 0 diables the feature
+:sleep_timer: 20 # seconds without input until player goes into sleep. 0 diables the feature
 :bg_img: 'FILE_PATH_BG'
 :font: 'FILE_PATH_FONT'
 :font_big: 'FILE_PATH_FONT_BIG'
