@@ -6,6 +6,7 @@ class SectionPlaylist < UpperSectionBase
     @page = @@save_data[:page_right]
     @offset_left = 4
     @offset_right = 8
+    @title = "Playlist"
     super
   end
 

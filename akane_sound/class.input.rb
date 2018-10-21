@@ -1,6 +1,7 @@
 class Input < Akane
-  attr_accessor :up, :down, :quit, :tstmp_last_input, :accept, :pageup,
-    :pagedown, :any_key
+  attr_accessor :up, :down, :pageup, :pagedown, :quit, :accept,
+    :toggle_shuffle, :toggle_repeat, :toggle_next, :toggle_mute,
+    :vol_up, :vol_down, :stop, :pause, :next, :refresh, :cmd, :any_key
   def initialize
     @tmp_up, @up = 0
     @tmp_down, @down = 0
@@ -15,11 +16,11 @@ class Input < Akane
     @tmp_vol_up, @vol_up = 0
     @tmp_vol_down, @vol_down = 0
     @tmp_stop, @stop = 0
+    @tmp_pause, @pause = 0
     @tmp_next, @next = 0
     @tmp_refresh, @refresh = 0
     @tmp_cmd, @cmd = 0
-    @any_key = 0
-    @tstmp_last_input = SDL2.get_ticks
+    @tmp_any_key, @any_key = 0
   end
 
   def handle_event(event)
@@ -27,7 +28,7 @@ class Input < Akane
     when SDL2::Event::Quit
       @quit = 1
     when SDL2::Event::KeyDown
-      @tstmp_last_input = SDL2.get_ticks
+      @tmp_any_key = 1
       if event.sym == SDL2::Key::ESCAPE
         @tmp_quit = 1
       end
@@ -35,7 +36,7 @@ class Input < Akane
         @tmp_accept = 1
       end
       if event.sym == SDL2::Key::SPACE
-        @tmp_accept = 1
+        @tmp_pause = 1
       end
 
       if event.sym == SDL2::Key::J
@@ -99,6 +100,7 @@ class Input < Akane
         end
       end
     when SDL2::Event::KeyUp
+      @tmp_any_key = 0
       if event.sym == SDL2::Key::ESCAPE
         @tmp_quit = 0
       end
@@ -106,7 +108,7 @@ class Input < Akane
         @tmp_accept = 0
       end
       if event.sym == SDL2::Key::SPACE
-        @tmp_accept = 0
+        @tmp_pause = 0
       end
 
       if event.sym == SDL2::Key::J
@@ -156,6 +158,11 @@ class Input < Akane
   end
 
   def set_state
+    if @tmp_any_key == 1
+      @any_key += 1
+    else
+      @any_key = 0
+    end
     if @tmp_quit == 1
       @quit += 1
     else
@@ -236,23 +243,6 @@ class Input < Akane
     else
       @cmd = 0
     end
-    @any_key =
-    @up+
-    @down+
-    @pageup+
-    @pagedown+
-    @quit+
-    @accept+
-    @toggle_shuffle+
-    @toggle_repeat+
-    @toggle_next+
-    @toggle_mute+
-    @vol_up+
-    @vol_down+
-    @stop+
-    @next+
-    @refresh+
-    @cmd
   end
 
 end

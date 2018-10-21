@@ -5,10 +5,14 @@ class SectionDir < UpperSectionBase
       @dir = '/media/winhdd/music/'
       #@dir = '/media/winhdd/music/Unsorted/'
       #@dir = '/home/ryu/Music/Unsorted/'
+      #@dir = @@config[:root_dir]
     else
       @dir = @@config[:root_dir]
     end
     @dir = @@save_data[:cur_dir] if @@save_data[:cur_dir]
+    @dir_stack = Array.new
+    @dir_stack.push @dir
+    @dir_stack = @@save_data[:dir_stack] if @@save_data[:dir_stack]
     @tracks = 0
     @playlist = set_playlist(@dir, false)
     @tracks_played = 0
@@ -18,6 +22,7 @@ class SectionDir < UpperSectionBase
     @page = @@save_data[:page_left]
     @offset_left = 8
     @offset_right = 4
+    @title = @dir
     super
   end
 

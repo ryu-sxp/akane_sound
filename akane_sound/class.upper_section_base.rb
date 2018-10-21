@@ -12,6 +12,8 @@ class UpperSectionBase < ViewBase
     @txt_color   = Util.to_col_ar(@@config[:text_color])
     @txt_col_dis = Util.to_col_ar(@@config[:text_color_disabled])
     @elements = Array.new
+    @title = @@font.render_blended(@title, @txt_color)
+    @title_rect = SDL2::Rect[8, @element_h/2-@title.h/2, @title.w, @title.h]
 
     update_element_strings
     set_page
@@ -57,7 +59,25 @@ class UpperSectionBase < ViewBase
         update_element_positions
       end
       if @@inp.accept == 1
-        Util.p (@elements.length.to_f/@max_elements.to_f).ceil.to_s
+        if @playlist[@pointer][:dir_flag]
+          if @playlist[@pointer][:filename] == '../'
+            @dir_stack.pop
+          else
+            @dir_stack.push @playlist[@pointer][:filename]
+          end
+          @playlist = set_playlist(@dir_stack.join(nil), false)
+          @pointer = 0
+          @page = 1
+          @title = @dir_stack.join(nil)
+          @title = @@font.render_blended(@title, @txt_color)
+          @title_rect =
+            SDL2::Rect[8, @element_h/2-@title.h/2, @title.w, @title.h]
+          update_element_strings
+          set_page
+          update_element_positions
+        else
+        end
+        #Util.p (@elements.length.to_f/@max_elements.to_f).ceil.to_s
       end
     end
   end
@@ -78,19 +98,34 @@ class UpperSectionBase < ViewBase
     @playlist.each do |item|
       unless item[:dir_flag]
         overshoot = ((@view.w-8)-@elements[i].dur.w-4)
-        if @elements[i].txt.w >= overshoot
-          sprite_w = @elements[i].txt.w-(@elements[i].txt.w-overshoot)
+        unless i == @pointer
+          if @elements[i].txt.w >= overshoot
+            sprite_w = @elements[i].txt.w-(@elements[i].txt.w-overshoot)
+          else
+            sprite_w = @elements[i].txt.w
+          end
+          sprite_h = @elements[i].txt.h
         else
-          sprite_w = @elements[i].txt.w
+          if @elements[i].txt_bld.w >= overshoot
+            sprite_w = @elements[i].txt_bld.w-(@elements[i].txt_bld.w-overshoot)
+          else
+            sprite_w = @elements[i].txt_bld.w
+          end
+          sprite_h = @elements[i].txt_bld.h
         end
-        sprite_h = @elements[i].txt.h
       else
-        sprite_w = @elements[i].txt.w
-        sprite_h = @elements[i].txt.h
+        unless i == @pointer
+          sprite_w = @elements[i].txt.w
+          sprite_h = @elements[i].txt.h
+        else
+          sprite_w = @elements[i].txt_bld.w
+          sprite_h = @elements[i].txt_bld.h
+        end
       end
       y = (0+(j*@element_h))+((@element_h/2)-(sprite_h/2))
       @elements[i].txt_src = SDL2::Rect[0, 0, sprite_w, sprite_h]
       @elements[i].txt_dst = SDL2::Rect[4, y, sprite_w, sprite_h]
+      @elements[i].bg_rect = SDL2::Rect[0, j*@element_h, @view.w, @element_h]
       unless item[:dir_flag]
         @elements[i].dur_dst = SDL2::Rect[(@view.w-@elements[i].dur.w)-4, y,
                                           @elements[i].dur.w,
@@ -128,6 +163,7 @@ class UpperSectionBase < ViewBase
         str = item[:filename]
       end
       el.txt = @@font.render_blended(str, txtcol)
+      el.txt_bld = @@font_bold.render_blended(str, txtcol)
 
       @elements.push(el)
       i += 1
@@ -150,18 +186,29 @@ class UpperSectionBase < ViewBase
                              @@config[:fg_color][:blue],
                              @@config[:fg_color][:alpha]]
     @@renderer.draw_rect(SDL2::Rect[0, 0, @border.w, @border.h])
-    @@renderer.viewport = @view
+    @@renderer.viewport = @view_base
+    # draw title
+    @@renderer.copy(@@renderer.create_texture_from(@title), nil, @title_rect)
+    
     # draw item list
+    @@renderer.viewport = @view
     i = @max_elements*(@page-1)
     j = -1
     @elements.each do |el|
       j +=1
       next if j < i
+      txt = nil
       if @pointer == i
-        @@renderer.draw_color = [ 255, 255, 255 ]
-        @@renderer.draw_rect(el.txt_dst)
+        @@renderer.draw_color = [@@config[:select_bg_color][:red],
+                                 @@config[:select_bg_color][:green],
+                                 @@config[:select_bg_color][:blue],
+                                 @@config[:select_bg_color][:alpha]]
+        @@renderer.fill_rect(el.bg_rect)
+        txt = el.txt_bld
+      else
+        txt = el.txt
       end
-      @@renderer.copy(@@renderer.create_texture_from(el.txt), el.txt_src,
+      @@renderer.copy(@@renderer.create_texture_from(txt), el.txt_src,
                       el.txt_dst)
       if el.dur
         @@renderer.copy(@@renderer.create_texture_from(el.dur),

@@ -44,6 +44,7 @@ class Akane
     Setup::prepare_binary_data('akane_bg.png')
     Setup::prepare_binary_data('NotoSansCJKjp-Regular.otf')
     Setup::prepare_binary_data('NotoSansCJKjp-Medium.otf')
+    Setup::prepare_binary_data('NotoSansCJKjp-Bold.otf')
     
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
                                    SDL2::Window::POS_CENTERED,
@@ -59,6 +60,7 @@ class Akane
     @frames = 0
     @fps = 30
     @tstmp_start = nil
+    @tstmp_last_input = SDL2.get_ticks
 
   end
 
@@ -81,6 +83,7 @@ class Akane
       end
       @@inp.set_state
       #update
+      @tstmp_last_input = SDL2.get_ticks if @@inp.any_key >= 1
       if @@inp.quit >= 1
         exit
       end
@@ -98,12 +101,9 @@ class Akane
       unless @@sleep_flag
         sec_dir.update
         sec_pl.update
-      else
-        if @@inp.any_key != 0
-          @@sleep_flag = false
-        end
       end
       @@sec_status.update
+      @@sleep_flag = false if @@inp.any_key >= 1
       sleep_check
       #draw
       @@renderer.viewport = nil
@@ -124,7 +124,7 @@ class Akane
   def sleep_check
     @@tstmp_now = SDL2.get_ticks
     if @@config[:sleep_timer] > 0
-      if (@@tstmp_now-@@inp.tstmp_last_input) >= @@config[:sleep_timer]*1000
+      if (@@tstmp_now-@tstmp_last_input) >= @@config[:sleep_timer]*1000
         @@sleep_flag = true
       end
     end

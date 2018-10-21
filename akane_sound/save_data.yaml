@@ -8,6 +8,7 @@
 :next: false
 :shuffle: false
 :cur_dir: null
+:dir_stack: null
 :cur_pl: null
 :focus_left: true
 :focus_right: false

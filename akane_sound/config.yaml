@@ -5,25 +5,25 @@
 :bg_img: 'FILE_PATH_BG'
 :font: 'FILE_PATH_FONT'
 :font_big: 'FILE_PATH_FONT_BIG'
-:font_size: 14
+:font_size: 12
 :line_height_mod: 1.5
 :root_dir: 'FILE_PATH_ROOT'
 :bg_type: 'repeat' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
 :bg_color:
     :red: 0
-    :green: 0
-    :blue: 20
+    :green: 12
+    :blue: 27
     :alpha: 225
 :view_left_bg_color:
     :red: 200
     :green: 0
     :blue: 20
-    :alpha: 80
+    :alpha: 0
 :view_right_bg_color:
     :red: 0
     :green: 200
     :blue: 20
-    :alpha: 80
+    :alpha: 0
 :view_bottom_bg_color:
     :red: 0
     :green: 0
@@ -55,9 +55,9 @@
     :blue: 155
     :alpha: 0
 :select_bg_color:
-    :red: 255
-    :green: 255
-    :blue: 255
-    :alpha: 0
+    :red: 0
+    :green: 0
+    :blue: 0
+    :alpha: 200
 
 
