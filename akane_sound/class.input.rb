@@ -1,8 +1,11 @@
 class Input < Akane
-  attr_accessor :up, :down, :quit, :tstmp_last_input, :accept
+  attr_accessor :up, :down, :quit, :tstmp_last_input, :accept, :pageup,
+    :pagedown
   def initialize
     @tmp_up, @up = 0
     @tmp_down, @down = 0
+    @tmp_pageup, @pageup = 0
+    @tmp_pagedown, @pagedown = 0
     @tmp_quit, @quit = 0
     @tmp_accept, @accept = 0
     @tmp_toggle_shuffle, @toggle_shuffle = 0
@@ -43,6 +46,13 @@ class Input < Akane
       end
       if event.sym == SDL2::Key::K
         @tmp_up = 1
+      end
+
+      if event.sym == SDL2::Key::PAGEDOWN
+        @tmp_pagedown = 1
+      end
+      if event.sym == SDL2::Key::PAGEUP
+        @tmp_pageup = 1
       end
 
       if event.sym == SDL2::Key::S
@@ -109,6 +119,13 @@ class Input < Akane
         @tmp_up = 0
       end
 
+      if event.sym == SDL2::Key::PAGEDOWN 
+        @tmp_pagedown = 0
+      end
+      if event.sym == SDL2::Key::PAGEUP
+        @tmp_pageup = 0
+      end
+
       if event.sym == SDL2::Key::S
         @tmp_toggle_shuffle = 0
         @tmp_stop = 0
@@ -156,6 +173,16 @@ class Input < Akane
       @down += 1
     else
       @down = 0
+    end
+    if @tmp_pageup == 1
+      @pageup += 1
+    else
+      @pageup = 0
+    end
+    if @tmp_pagedown == 1
+      @pagedown += 1
+    else
+      @pagedown = 0
     end
     if @tmp_accept == 1
       @accept += 1

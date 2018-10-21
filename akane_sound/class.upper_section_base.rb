@@ -17,6 +17,7 @@ class UpperSectionBase < ViewBase
     @elements = Array.new
 
     update_element_strings
+    set_page
     update_element_positions
   end
 
@@ -25,9 +26,11 @@ class UpperSectionBase < ViewBase
       if @@inp.down == 1 || @@inp.down >= 20
         if @@inp.down == 1
           @pointer = (@pointer+1) % @elements.length
+          set_page
           update_element_positions
         elsif @@inp.down == 22
           @pointer = (@pointer+1) % @elements.length
+          set_page
           update_element_positions
           @@inp.down = 20
         end
@@ -35,12 +38,29 @@ class UpperSectionBase < ViewBase
       if @@inp.up == 1 || @@inp.up >= 20
         if @@inp.up == 1
           @pointer = (@pointer+(@elements.length-1)) % @elements.length
+          set_page
           update_element_positions
         elsif @@inp.up == 22
           @pointer = (@pointer+(@elements.length-1)) % @elements.length
+          set_page
           update_element_positions
           @@inp.up = 20
         end
+      end
+      if @@inp.pagedown == 1
+        @pointer = @max_elements*@page
+        @pointer = @elements.length-1 if @pointer > @elements.length-1
+        set_page
+        update_element_positions
+      end
+      if @@inp.pageup == 1
+        @pointer = @max_elements*(@page-2)
+        @pointer = 0 if @pointer < 0
+        set_page
+        update_element_positions
+      end
+      if @@inp.accept == 1
+        Util.p (@elements.length.to_f/@max_elements.to_f).ceil.to_s
       end
     end
   end
@@ -52,16 +72,16 @@ class UpperSectionBase < ViewBase
                        @view_base.y+@offset,
                        @view_base.w - @offset*2,
                        view_height]
+    set_page
     update_element_strings
     update_element_positions
   end
 
   def update_element_positions
-    i = -1
     j = 0
+    i = @max_elements*(@page-1)
+
     @playlist.each do |item|
-      i += 1
-      next if (@pointer > @max_elements-1) && i < @pointer
       unless item[:dir_flag]
         overshoot = ((@view.w-8)-@elements[i].dur.w-4)
         if @elements[i].txt.w >= overshoot
@@ -74,7 +94,7 @@ class UpperSectionBase < ViewBase
         sprite_w = @elements[i].txt.w
         sprite_h = @elements[i].txt.h
       end
-      y = 0+(j*@element_h)+(@element_h/2)-(sprite_h/2)
+      y = (0+(j*@element_h))+((@element_h/2)-(sprite_h/2))
       @elements[i].txt_src = SDL2::Rect[0, 0, sprite_w, sprite_h]
       @elements[i].txt_dst = SDL2::Rect[4, y, sprite_w, sprite_h]
       unless item[:dir_flag]
@@ -82,7 +102,9 @@ class UpperSectionBase < ViewBase
                                           @elements[i].dur.w,
                                           @elements[i].dur.h]
       end
-      j += 1
+      i+= 1
+      j+= 1
+      break if i >= @playlist.length
     end
   end
 
@@ -136,10 +158,11 @@ class UpperSectionBase < ViewBase
     @@renderer.draw_rect(SDL2::Rect[0, 0, @border.w, @border.h])
     @@renderer.viewport = @view
     # draw item list
-    i = -1
+    i = @max_elements*(@page-1)
+    j = -1
     @elements.each do |el|
-      i += 1
-      next if (@pointer > @max_elements-1) && i < @pointer
+      j +=1
+      next if j < i
       if @pointer == i
         @@renderer.draw_color = [ 255, 255, 255 ]
         @@renderer.draw_rect(el.txt_dst)
@@ -150,6 +173,8 @@ class UpperSectionBase < ViewBase
         @@renderer.copy(@@renderer.create_texture_from(el.dur),
                         nil, el.dur_dst)
       end
+      i += 1
+      break if i >= @elements.length
     end
   end
 
@@ -164,4 +189,23 @@ class UpperSectionBase < ViewBase
     end
     return height
   end
+
+  def set_page
+    #@page = 1 if @pointer < @max_elements-1
+    @page = get_page((@max_elements), @pointer)
+  end
+
+  def get_page(max, pointer)
+    page = 1
+    i = 0
+    while i <= pointer
+      if i == max*page
+        page += 1
+      end
+      i += 1
+    end
+
+    return page
+  end
 end
+
