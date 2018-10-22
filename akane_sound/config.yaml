@@ -39,6 +39,11 @@
     :green: 255
     :blue: 255
     :alpha: 255
+:text_color_status:
+    :red: 255
+    :green: 255
+    :blue: 255
+    :alpha: 255
 :text_color_disabled:
     :red: 120
     :green: 120

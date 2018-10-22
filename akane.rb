@@ -16,7 +16,7 @@ class Akane
   @@renderer   = nil
   @@pref_dir   = nil
   @@screen     = nil
-  @@status     = nil
+  @@sec_status     = nil
   @@config     = Hash.new
   @@save_data  = Hash.new
   @@alert_flag = false
@@ -33,7 +33,6 @@ class Akane
               SDL2::INIT_EVENTS)
     SDL2::TTF.init
 
-    set_status("Welcome to Akane!")
     Setup::init(ARGV[0])
 
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
@@ -110,6 +109,11 @@ class Akane
   end
 
   def set_status(str)
+    @@sec_status.msg.destroy if @@sec_status.msg
+    @@sec_status.msg = @@font.render_blended('> '+str, Util.to_col_ar(
+      @@config[:text_color_status]))
+    @@sec_status.msg_rect = SDL2::Rect[0, 0, @@sec_status.msg.w,
+                                       @@sec_status.msg.h]
   end
 
   private

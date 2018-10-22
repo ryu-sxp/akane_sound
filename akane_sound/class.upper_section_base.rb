@@ -58,6 +58,16 @@ class UpperSectionBase < ViewBase
         set_page
         update_element_positions
       end
+      if @@inp.first == 1
+        @pointer = 0
+        set_page
+        update_element_positions
+      end
+      if @@inp.last == 1
+        @pointer = @elements.length-1
+        set_page
+        update_element_positions
+      end
       if @@inp.accept == 1
         if @playlist[@pointer][:dir_flag]
           if @playlist[@pointer][:filename] == '../'

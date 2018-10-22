@@ -1,10 +1,13 @@
 class Input < Akane
   attr_accessor :up, :down, :pageup, :pagedown, :quit, :accept,
     :toggle_shuffle, :toggle_repeat, :toggle_next, :toggle_mute,
-    :vol_up, :vol_down, :stop, :pause, :next, :refresh, :cmd, :any_key
+    :vol_up, :vol_down, :stop, :pause, :next, :refresh, :cmd, :any_key,
+    :last, :first
   def initialize
     @tmp_up, @up = 0
     @tmp_down, @down = 0
+    @tmp_last, @last = 0
+    @tmp_first, @first = 0
     @tmp_pageup, @pageup = 0
     @tmp_pagedown, @pagedown = 0
     @tmp_quit, @quit = 0
@@ -51,6 +54,14 @@ class Input < Akane
       end
       if event.sym == SDL2::Key::PAGEUP
         @tmp_pageup = 1
+      end
+
+      if event.sym == SDL2::Key::G
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @tmp_last = 1
+        else
+          @tmp_first = 1
+        end
       end
 
       if event.sym == SDL2::Key::S
@@ -125,6 +136,11 @@ class Input < Akane
         @tmp_pageup = 0
       end
 
+      if event.sym == SDL2::Key::G
+        @tmp_last = 0
+        @tmp_first = 0
+      end
+
       if event.sym == SDL2::Key::S
         @tmp_toggle_shuffle = 0
         @tmp_stop = 0
@@ -177,6 +193,16 @@ class Input < Akane
       @down += 1
     else
       @down = 0
+    end
+    if @tmp_last == 1
+      @last += 1
+    else
+      @last = 0
+    end
+    if @tmp_first == 1
+      @first += 1
+    else
+      @first = 0
     end
     if @tmp_pageup == 1
       @pageup += 1
