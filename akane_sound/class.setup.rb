@@ -1,4 +1,23 @@
 class Setup < Akane
+  def self.init(arg)
+    @@pref_dir = SDL2.preference_path("sxp", "akane_sound")
+    if arg == "debug"
+      @@debug_flag = true
+      File.delete(File.open(@@pref_dir+'config.yaml'))
+      File.delete(File.open(@@pref_dir+'save_data.yaml'))
+    end
+    unless Dir.exist?(File.join(@@pref_dir, "cache"))
+      Dir.mkdir(File.join(@@pref_dir, "cache"))
+    end
+
+    Setup::prepare_config
+    Setup::prepare_save_data
+    Setup::prepare_binary_data('akane_bg.png')
+    Setup::prepare_binary_data('NotoSansCJKjp-Regular.otf')
+    Setup::prepare_binary_data('NotoSansCJKjp-Medium.otf')
+    Setup::prepare_binary_data('NotoSansCJKjp-Bold.otf')
+  end
+
   def self.prepare_config
     unless File.file?(@@pref_dir+"config.yaml")
       file = File.open("./akane_sound/config.yaml", "r")

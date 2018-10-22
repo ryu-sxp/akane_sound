@@ -28,6 +28,15 @@ class SectionDir < UpperSectionBase
 
   def update
     super
+    if @focus_flag
+      if @@inp.refresh == 1
+        @pointer = 0
+        @playlist = set_playlist(@dir_stack.join(nil), true)
+        update_element_strings
+        set_page
+        update_element_positions
+      end
+    end
   end
 
   def update_size(x, y, w, h)
@@ -40,6 +49,17 @@ class SectionDir < UpperSectionBase
 
   #return: Array of Hash { filename: , dir_flag:, duration: }
   def set_playlist(dir, refresh)
+    set_status("Loading directory playlist from cache...")
+    #cache_name = File.join(@@pref_dir, "cache",
+    #                       dir.gsub(/\//,'-')[1..-2] + '.yaml')
+    cache = File.join(dir, ".akane_cache.yaml")
+    #Util.p cache
+    if File.exist?(cache) && !refresh
+      ar = YAML.load(File.open(cache))
+      set_status("Playlist loaded.")
+      return ar
+    end
+    set_status("Setting up directory playlist...")
     ar = Array.new
     dir_contents_dir = Dir.entries(dir).sort.select do |entry|
       if dir == @@config[:root_dir]
@@ -53,7 +73,7 @@ class SectionDir < UpperSectionBase
     dir_contents_dir.each do |entry|
       ar.push({ filename: entry+'/', dir_flag: true, duration: nil, bps: nil,
                 br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
-                tag: nil, title: nil })
+                tag: nil, title: nil, pl_flag: false })
     end
     dir_contents_file = Dir.entries(dir).sort.select do |entry|
       !File.directory?(File.join(dir, entry)) and
@@ -74,10 +94,24 @@ class SectionDir < UpperSectionBase
       tag = '['+pltime+'|'+type+']'
       ar.push({ filename: entry, dir_flag: false, duration: dur.to_i,
                 bps: bps.to_i, br: br[0..2], artist: artist, album: album,
-                pl_time: pltime, type: type, tag: tag, title: title })
+                pl_time: pltime, type: type, tag: tag, title: title,
+                pl_flag: false })
       @tracks += 1
     end
-    p ar.to_s if @@debug_flag
+    dir_contents_pl = Dir.entries(dir).sort.select do |entry|
+      !File.directory?(File.join(dir, entry)) and
+        (/\.apl.yaml\z/ === entry)
+    end
+    dir_contents_pl.each do |entry|
+      ar.push({ filename: entry+'/', dir_flag: false, duration: nil, bps: nil,
+                br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
+                tag: nil, title: nil, pl_flag: true })
+    end
+    # write cache
+    File.open(cache, 'w') { |file| file.write(ar.to_yaml) }
+
+    #p ar.to_s if @@debug_flag
+    set_status("Playlist set.")
     return ar
   end
 

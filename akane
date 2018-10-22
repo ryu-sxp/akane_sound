@@ -33,19 +33,9 @@ class Akane
               SDL2::INIT_EVENTS)
     SDL2::TTF.init
 
-    @@pref_dir = SDL2.preference_path("sxp", "akane_sound")
-    if ARGV[0] == "debug"
-      @@debug_flag = true
-      File.delete(File.open(@@pref_dir+'config.yaml'))
-      File.delete(File.open(@@pref_dir+'save_data.yaml'))
-    end
-    Setup::prepare_config
-    Setup::prepare_save_data
-    Setup::prepare_binary_data('akane_bg.png')
-    Setup::prepare_binary_data('NotoSansCJKjp-Regular.otf')
-    Setup::prepare_binary_data('NotoSansCJKjp-Medium.otf')
-    Setup::prepare_binary_data('NotoSansCJKjp-Bold.otf')
-    
+    set_status("Welcome to Akane!")
+    Setup::init(ARGV[0])
+
     @@window = SDL2::Window.create("akane_sound", SDL2::Window::POS_CENTERED,
                                    SDL2::Window::POS_CENTERED,
                                    @@config[:window_w], @@config[:window_h],
@@ -117,6 +107,9 @@ class Akane
       #GC.start
       wait_fps
     end
+  end
+
+  def set_status(str)
   end
 
   private
