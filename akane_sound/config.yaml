@@ -51,14 +51,19 @@
     :alpha: 255
 :volume_bar_color:
     :red: 0
-    :green: 255
-    :blue: 55
-    :alpha: 0
+    :green: 155
+    :blue: 80
+    :alpha: 255
+:volume_bar_max_color:
+    :red: 155
+    :green: 0
+    :blue: 80
+    :alpha: 255
 :prog_bar_color:
     :red: 0
     :green: 155
     :blue: 155
-    :alpha: 0
+    :alpha: 255
 :select_bg_color:
     :red: 0
     :green: 0
