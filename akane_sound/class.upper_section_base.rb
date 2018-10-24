@@ -69,24 +69,6 @@ class UpperSectionBase < ViewBase
         update_element_positions
       end
       if @@inp.accept == 1
-        if @playlist[@pointer][:dir_flag]
-          if @playlist[@pointer][:filename] == '../'
-            @dir_stack.pop
-          else
-            @dir_stack.push @playlist[@pointer][:filename]
-          end
-          @playlist = set_playlist(@dir_stack.join(nil), false)
-          @pointer = 0
-          @page = 1
-          @title = @dir_stack.join(nil)
-          @title = @@font.render_blended(@title, @txt_color)
-          @title_rect =
-            SDL2::Rect[8, @element_h/2-@title.h/2, @title.w, @title.h]
-          update_element_strings
-          set_page
-          update_element_positions
-        else
-        end
         #Util.p (@elements.length.to_f/@max_elements.to_f).ceil.to_s
       end
     end

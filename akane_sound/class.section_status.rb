@@ -2,8 +2,6 @@ class SectionStatus < ViewBase
   attr_accessor :msg, :msg_rect
   def initialize(x, y, w, h, col)
     @txt_color   = Util.to_col_ar(@@config[:text_color])
-    @msg
-    @msg_rect
     @vol_rect
     @vol_texture
     @vol_text_rect
@@ -15,14 +13,17 @@ class SectionStatus < ViewBase
     @next_off = @@font.render_blended('[NEXT]', @txt_color)
     super
     set_view
-    set_status = "Welcome to Akane"
+    set_status("Welcome to Akane")
     update_volume_rect
     update_volume_texture
   end
 
   def update
     if @@inp.pause == 1
-      #toggle play/pause
+      @@sound.play_track
+    end
+    if @@inp.stop == 1
+      @@sound.stop_track
     end
     if @@inp.vol_down == 1 || @@inp.vol_down >= 20
       @@sound.volume -= 1
@@ -139,5 +140,4 @@ class SectionStatus < ViewBase
       @vol_rect = SDL2::Rect[@view.w-128, 0, @@sound.volume, @msg_rect.h]
     end
   end
-
 end

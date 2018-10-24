@@ -16,7 +16,7 @@ class Akane
   @@renderer   = nil
   @@pref_dir   = nil
   @@screen     = nil
-  @@sec_status     = nil
+  @@sec_status = nil
   @@sound      = nil
   @@config     = Hash.new
   @@save_data  = Hash.new
@@ -30,6 +30,8 @@ class Akane
   @@sleep_flag = false
   @@tstmp_now  = nil
   def initialize
+    @msg = nil
+    @msg_rect = nil
     SDL2.init(SDL2::INIT_TIMER|SDL2::INIT_AUDIO|SDL2::INIT_VIDEO|
               SDL2::INIT_EVENTS)
     SDL2::TTF.init
@@ -114,11 +116,11 @@ class Akane
   end
 
   def set_status(str)
-    @@sec_status.msg.destroy if @@sec_status.msg
-    @@sec_status.msg = @@font.render_blended('> '+str, Util.to_col_ar(
+    @msg.destroy if @msg
+    @msg = @@font.render_blended('> '+str, Util.to_col_ar(
       @@config[:text_color_status]))
-    @@sec_status.msg_rect = SDL2::Rect[0, 0, @@sec_status.msg.w,
-                                       @@sec_status.msg.h]
+    @msg_rect = SDL2::Rect[0, 0, @msg.w,
+                                       @msg.h]
   end
 
   private

@@ -14,7 +14,8 @@ class SectionDir < UpperSectionBase
     @dir_stack.push @dir
     @dir_stack = @@save_data[:dir_stack] if @@save_data[:dir_stack]
     @tracks = 0
-    @playlist = set_playlist(@dir, false)
+    @playlist = Array.new
+    @playlist = set_playlist(@dir_stack.join(nil), false)
     @tracks_played = 0
     @playlist_state = nil
     @cache_flag = false
@@ -35,6 +36,33 @@ class SectionDir < UpperSectionBase
         update_element_strings
         set_page
         update_element_positions
+      end
+      if @@inp.accept == 1
+        # play song :)
+        if !@playlist[@pointer][:dir_flag] && !@playlist[@pointer][:pl_flag]
+          @@sound.set_side("left")
+          @@sound.stop_track
+          @@sound.set_track(@pointer)
+          @@sound.start_track
+        end
+        # switch directory
+        if @playlist[@pointer][:dir_flag]
+          if @playlist[@pointer][:filename] == '../'
+            @dir_stack.pop
+          else
+            @dir_stack.push @playlist[@pointer][:filename]
+          end
+          @playlist = set_playlist(@dir_stack.join(nil), false)
+          @pointer = 0
+          @page = 1
+          @title = @dir_stack.join(nil)
+          @title = @@font.render_blended(@title, @txt_color)
+          @title_rect =
+            SDL2::Rect[8, @element_h/2-@title.h/2, @title.w, @title.h]
+          update_element_strings
+          set_page
+          update_element_positions
+        end
       end
     end
   end
@@ -57,6 +85,7 @@ class SectionDir < UpperSectionBase
     if File.exist?(cache) && !refresh
       ar = YAML.load(File.open(cache))
       set_status("Playlist loaded.")
+      @@sound.set_tmp_playlist(ar, "left", dir)
       return ar
     end
     set_status("Setting up directory playlist...")
@@ -112,6 +141,7 @@ class SectionDir < UpperSectionBase
 
     #p ar.to_s if @@debug_flag
     set_status("Playlist set.")
+    @@sound.set_tmp_playlist(ar, "left", dir)
     return ar
   end
 

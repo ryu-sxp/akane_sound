@@ -219,6 +219,16 @@ class Input < Akane
     else
       @accept = 0
     end
+    if @tmp_pause == 1
+      @pause += 1
+    else
+      @pause = 0
+    end
+    if @tmp_stop == 1
+      @stop += 1
+    else
+      @stop = 0
+    end
     if @tmp_toggle_shuffle == 1
       @toggle_shuffle += 1
     else
@@ -248,11 +258,6 @@ class Input < Akane
       @vol_down += 1
     else
       @vol_down = 0
-    end
-    if @tmp_stop == 1
-      @stop += 1
-    else
-      @stop = 0
     end
     if @tmp_next == 1
       @next += 1
