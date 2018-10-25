@@ -42,7 +42,7 @@ class SectionDir < UpperSectionBase
         if !@playlist[@pointer][:dir_flag] && !@playlist[@pointer][:pl_flag]
           @@sound.set_side("left")
           @@sound.stop_track
-          @@sound.set_track(@pointer, true)
+          @@sound.set_track(@pointer)
           @@sound.start_track
         end
         # switch directory
@@ -102,7 +102,7 @@ class SectionDir < UpperSectionBase
     dir_contents_dir.each do |entry|
       ar.push({ filename: entry+'/', dir_flag: true, duration: nil, bps: nil,
                 br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
-                tag: nil, title: nil, pl_flag: false, sample: nil })
+                tag: nil, title: nil, pl_flag: false })
     end
     dir_contents_file = Dir.entries(dir).sort.select do |entry|
       !File.directory?(File.join(dir, entry)) and
@@ -112,8 +112,6 @@ class SectionDir < UpperSectionBase
       dur = %x( mediainfo --Inform="Audio;%Duration%" "#{dir+entry}" )
       bps = %x( mediainfo --Inform="Audio;%BitRate%" "#{dir+entry}" )
       br  = %x( mediainfo --Inform="Audio;%BitRate_Mode%" "#{dir+entry}" )
-      sample  = %x( mediainfo --Inform="Audio;%SamplingRate%" "#{dir+entry}" )
-      #sample2  = %x( mediainfo --Inform="Audio;%SamplingRate/String%" "#{dir+entry}" )
       artist = %x(ffprobe -loglevel error -show_entries format_tags=artist -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
       album = %x(ffprobe -loglevel error -show_entries format_tags=album -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
       title = %x(ffprobe -loglevel error -show_entries format_tags=title -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
@@ -126,7 +124,7 @@ class SectionDir < UpperSectionBase
       ar.push({ filename: entry, dir_flag: false, duration: dur.to_i,
                 bps: bps.to_i, br: br[0..2], artist: artist, album: album,
                 pl_time: pltime, type: type, tag: tag, title: title,
-                pl_flag: false, sample: sample })
+                pl_flag: false })
       @tracks += 1
     end
     dir_contents_pl = Dir.entries(dir).sort.select do |entry|
@@ -136,7 +134,7 @@ class SectionDir < UpperSectionBase
     dir_contents_pl.each do |entry|
       ar.push({ filename: entry+'/', dir_flag: false, duration: nil, bps: nil,
                 br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
-                tag: nil, title: nil, pl_flag: true, sample: nil })
+                tag: nil, title: nil, pl_flag: true })
     end
     # write cache
     File.open(cache, 'w') { |file| file.write(ar.to_yaml) }

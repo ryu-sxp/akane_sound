@@ -5,6 +5,11 @@ class SectionStatus < ViewBase
     @vol_rect
     @vol_texture
     @vol_text_rect
+    @timer_passed_texture
+    @timer_passed_rect
+    @timer_total_texture
+    @timer_total_rect
+    @progress_bar_rect
     @shuffle_on = @@font_bold.render_blended('[SHUFFLE]', @txt_color)
     @shuffle_off = @@font.render_blended('[SHUFFLE]', @txt_color)
     @repeat_on = @@font_bold.render_blended('[REPEAT]', @txt_color)
@@ -16,6 +21,7 @@ class SectionStatus < ViewBase
     set_status("Welcome to Akane")
     update_volume_rect
     update_volume_texture
+    update_data
   end
 
   def update
@@ -54,6 +60,12 @@ class SectionStatus < ViewBase
     if @@inp.toggle_next == 1
       @@sound.toggle_next
     end
+    if @@inp.next == 1
+      @@sound.skip
+    end
+    update_timers
+    update_progress_bar
+    update_data
   end
 
   def update_size(x, y, w, h)
@@ -61,6 +73,8 @@ class SectionStatus < ViewBase
     set_view
     update_volume_rect
     update_volume_texture
+    update_progress_bar
+    update_data
   end
   
   def draw
@@ -70,7 +84,7 @@ class SectionStatus < ViewBase
 
     # draw status stuff
     @@renderer.viewport = @view
-    @@renderer.copy(@@renderer.create_texture_from(@msg), nil, @msg_rect)
+    @@renderer.copy(@@renderer.create_texture_from(@@msg), nil, @@msg_rect)
     # draw volume
     @@renderer.copy(@vol_texture, nil, @vol_text_rect)
     if @@sound.volume < 101
@@ -85,32 +99,50 @@ class SectionStatus < ViewBase
                                @@config[:volume_bar_max_color][:alpha]]
     end
     @@renderer.fill_rect(@vol_rect)
+
+    # draw timers
+    @@renderer.copy(@timer_passed_texture, nil,
+                      @timer_passed_rect)
+    @@renderer.copy(@timer_total_texture, nil,
+                      @timer_total_rect)
+    # draw track info
+    # sampling rate
+    @@renderer.copy(@sampling_rate_texture, nil, @sampling_rate_rect)
+    # bps
+    @@renderer.copy(@bps_texture, nil, @bps_rect)
     # draw flags
     if @@sound.mode[:shuffle]
       @@renderer.copy(@@renderer.create_texture_from(@shuffle_on), nil,
-                      SDL2::Rect[240, 18, @shuffle_on.w, @shuffle_on.h])
+                      SDL2::Rect[210, 18, @shuffle_on.w, @shuffle_on.h])
     else
       @@renderer.copy(@@renderer.create_texture_from(@shuffle_off), nil,
-                      SDL2::Rect[240, 18, @shuffle_off.w, @shuffle_off.h])
+                      SDL2::Rect[210, 18, @shuffle_off.w, @shuffle_off.h])
     end
     if @@sound.mode[:repeat]
       @@renderer.copy(@@renderer.create_texture_from(@repeat_on), nil,
-                      SDL2::Rect[240+@shuffle_on.w+4, 18,
+                      SDL2::Rect[210+@shuffle_on.w+2, 18,
                                  @repeat_on.w, @repeat_on.h])
     else
       @@renderer.copy(@@renderer.create_texture_from(@repeat_off), nil,
-                      SDL2::Rect[240+@shuffle_on.w+4, 18,
+                      SDL2::Rect[210+@shuffle_on.w+2, 18,
                                  @repeat_off.w, @repeat_off.h])
     end
     if @@sound.mode[:next]
       @@renderer.copy(@@renderer.create_texture_from(@next_on), nil,
-                      SDL2::Rect[240+@shuffle_on.w+4+@repeat_on.w+4, 18,
+                      SDL2::Rect[210+@shuffle_on.w+2+@repeat_on.w+2, 18,
                                  @next_on.w, @next_on.h])
     else
       @@renderer.copy(@@renderer.create_texture_from(@next_off), nil,
-                      SDL2::Rect[240+@shuffle_on.w+4+@repeat_on.w+4, 18,
+                      SDL2::Rect[210+@shuffle_on.w+2+@repeat_on.w+2, 18,
                                  @next_off.w, @next_off.h])
     end
+
+    # draw progess bar
+    @@renderer.draw_color = [@@config[:prog_bar_color][:red],
+                             @@config[:prog_bar_color][:green],
+                             @@config[:prog_bar_color][:blue],
+                             @@config[:prog_bar_color][:alpha]]
+    @@renderer.fill_rect(@progress_bar_rect)
   end
 
   private
@@ -122,6 +154,49 @@ class SectionStatus < ViewBase
                        @view_base.h-16]
   end
 
+  def update_progress_bar
+    @progress_bar_rect =
+      SDL2::Rect[0, 36, @view.w * @@sound.progress / 100, 20]
+  end
+
+  def update_data
+    if @@sound.state == "playing" || @@sound.state == "paused"
+      track = @@sound.get_track
+      str1 = "["+track[:sample]+"Hz]"
+      str2 = "["+(track[:bps]/1000).to_s+" kbps]"
+    else
+      str1 = "[]"
+      str2 = "[]"
+    end
+    sur = @@font.render_blended(str1, @txt_color)
+    @sampling_rate_texture = @@renderer.create_texture_from(sur)
+    @sampling_rate_rect = SDL2::Rect[84, 18, sur.w, sur.h]
+    sur.destroy
+    sur = @@font.render_blended(str2, @txt_color)
+    @bps_texture = @@renderer.create_texture_from(sur)
+    @bps_rect = SDL2::Rect[148, 18, sur.w, sur.h]
+    sur.destroy
+  end
+
+  def update_timers
+    if @@sound.state == "playing" || @@sound.state == "paused"
+      str1 = "["+Util.ms_to_time_str(@@sound.tstmp_play_cur)+"]"
+      track = @@sound.get_track
+      str2 = "["+track[:pl_time]+"]"
+    else
+      str1 = "[]"
+      str2 = "[]"
+    end
+    sur = @@font.render_blended(str1, @txt_color)
+    @timer_passed_texture = @@renderer.create_texture_from(sur)
+    @timer_passed_rect = SDL2::Rect[0, 18, sur.w, sur.h]
+    sur.destroy
+    sur = @@font.render_blended(str2, @txt_color)
+    @timer_total_texture = @@renderer.create_texture_from(sur)
+    @timer_total_rect = SDL2::Rect[42, 18, sur.w, sur.h]
+    sur.destroy
+  end
+
   def update_volume_texture
     int = @@sound.volume
     str = int.to_s
@@ -131,13 +206,13 @@ class SectionStatus < ViewBase
     str += "%"
     sur = @@font.render_blended(str, @txt_color)
     @vol_texture = @@renderer.create_texture_from(sur)
-    @vol_text_rect = SDL2::Rect[@view.w-212, 0, sur.w, sur.h]
+    @vol_text_rect = SDL2::Rect[@view.w-212, 18, sur.w, sur.h]
     sur.destroy
   end
 
   def update_volume_rect
-    if @msg_rect
-      @vol_rect = SDL2::Rect[@view.w-128, 0, @@sound.volume, @msg_rect.h]
+    if @@msg_rect
+      @vol_rect = SDL2::Rect[@view.w-128, 18, @@sound.volume, @@msg_rect.h]
     end
   end
 end

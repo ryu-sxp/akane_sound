@@ -18,6 +18,15 @@ module Util
     ar
   end
   def Util.ms_to_time_str(ms)
+    sec = ((ms.to_i/1000)%60).to_i
+    min = ((ms.to_i/1000-sec)/60).to_s
+    sec = sec.to_s
+    sec.prepend("0") if sec.length == 1
+    min.prepend("0") if min.length == 1
+    "#{min}:#{sec}"
+  end
+=begin
+  def Util.ms_to_time_str(ms)
     sec = ms.to_f/1000.0
     min = sec/60.0
     sec = ((min%60.0).round(2)*10).to_i
@@ -28,5 +37,12 @@ module Util
     end
     sec = '00' if sec == 100
     "#{min}:#{sec}"
+  end
+=end
+  def Util.int_scale(cur, max, scale_to)
+    ((cur.to_f/max)*scale_to.to_f).to_int
+  end
+  def Util.get_percentage(cur, max)
+    ((cur.to_f/max.to_f)*100.0).round(2)
   end
 end

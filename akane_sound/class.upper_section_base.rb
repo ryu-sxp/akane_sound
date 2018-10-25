@@ -11,6 +11,7 @@ class UpperSectionBase < ViewBase
     set_view
     @txt_color   = Util.to_col_ar(@@config[:text_color])
     @txt_col_dis = Util.to_col_ar(@@config[:text_color_disabled])
+    @txt_color_sel   = Util.to_col_ar(@@config[:text_color_selected])
     @elements = Array.new
     @title = @@font.render_blended(@title, @txt_color)
     @title_rect = SDL2::Rect[8, @element_h/2-@title.h/2, @title.w, @title.h]
@@ -156,6 +157,8 @@ class UpperSectionBase < ViewBase
       end
       el.txt = @@font.render_blended(str, txtcol)
       el.txt_bld = @@font_bold.render_blended(str, txtcol)
+      el.txt_sel = @@font.render_blended(str, @txt_color_sel)
+      el.txt_sel_bld = @@font_bold.render_blended(str, @txt_color_sel)
 
       @elements.push(el)
       i += 1
@@ -196,9 +199,19 @@ class UpperSectionBase < ViewBase
                                  @@config[:select_bg_color][:blue],
                                  @@config[:select_bg_color][:alpha]]
         @@renderer.fill_rect(el.bg_rect)
-        txt = el.txt_bld
+        if File.join(@dir_stack.join(nil), @playlist[i][:filename]) ==
+            @@sound.get_play_path("left")
+          txt = el.txt_sel_bld
+        else
+          txt = el.txt_bld
+        end
       else
-        txt = el.txt
+        if File.join(@dir_stack.join(nil), @playlist[i][:filename]) ==
+            @@sound.get_play_path("left")
+          txt = el.txt_sel
+        else
+          txt = el.txt
+        end
       end
       @@renderer.copy(@@renderer.create_texture_from(txt), el.txt_src,
                       el.txt_dst)
