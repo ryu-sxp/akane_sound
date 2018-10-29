@@ -2,7 +2,7 @@ class Input < Akane
   attr_accessor :up, :down, :pageup, :pagedown, :quit, :accept,
     :toggle_shuffle, :toggle_repeat, :toggle_next, :toggle_mute,
     :vol_up, :vol_down, :stop, :pause, :next, :refresh, :cmd, :any_key,
-    :last, :first
+    :last, :first, :prev, :append, :append_r, :switch
   def initialize
     @tmp_up, @up = 0
     @tmp_down, @down = 0
@@ -21,8 +21,12 @@ class Input < Akane
     @tmp_stop, @stop = 0
     @tmp_pause, @pause = 0
     @tmp_next, @next = 0
+    @tmp_prev, @prev = 0
+    @tmp_append, @append = 0
+    @tmp_append_r, @append_r = 0
     @tmp_refresh, @refresh = 0
     @tmp_cmd, @cmd = 0
+    @tmp_switch, @switch = 0
     @tmp_any_key, @any_key = 0
   end
 
@@ -32,6 +36,9 @@ class Input < Akane
       @quit = 1
     when SDL2::Event::KeyDown
       @tmp_any_key = 1
+      if event.sym == SDL2::Key::TAB
+        @tmp_switch = 1
+      end
       if event.sym == SDL2::Key::ESCAPE
         @tmp_quit = 1
       end
@@ -54,6 +61,9 @@ class Input < Akane
       end
       if event.sym == SDL2::Key::PAGEUP
         @tmp_pageup = 1
+      end
+      if event.sym == SDL2::Key::P
+        @tmp_prev = 1
       end
 
       if event.sym == SDL2::Key::G
@@ -88,6 +98,14 @@ class Input < Akane
         end
       end
 
+      if event.sym == SDL2::Key::A
+        if event.mod.bit?(SDL2::Key::Mod::SHIFT)
+          @tmp_append_r = 1        
+        else
+          @tmp_append = 1
+        end
+      end
+
       if event.sym == SDL2::Key::PERIOD
         if event.mod.bit?(SDL2::Key::Mod::SHIFT)
           @tmp_vol_up = 1        
@@ -112,6 +130,9 @@ class Input < Akane
       end
     when SDL2::Event::KeyUp
       @tmp_any_key = 0
+      if event.sym == SDL2::Key::TAB
+        @tmp_switch = 0
+      end
       if event.sym == SDL2::Key::ESCAPE
         @tmp_quit = 0
       end
@@ -131,6 +152,9 @@ class Input < Akane
 
       if event.sym == SDL2::Key::PAGEDOWN 
         @tmp_pagedown = 0
+      end
+      if event.sym == SDL2::Key::P
+        @tmp_prev = 0
       end
       if event.sym == SDL2::Key::PAGEUP
         @tmp_pageup = 0
@@ -156,6 +180,11 @@ class Input < Akane
         @tmp_refresh = 0
       end
 
+      if event.sym == SDL2::Key::A
+        @tmp_append = 0
+        @tmp_append_r = 0
+      end
+
       if event.sym == SDL2::Key::PERIOD
         @tmp_vol_up = 0
       end
@@ -178,6 +207,11 @@ class Input < Akane
       @any_key += 1
     else
       @any_key = 0
+    end
+    if @tmp_switch == 1
+      @switch += 1
+    else
+      @switch = 0
     end
     if @tmp_quit == 1
       @quit += 1
@@ -263,6 +297,21 @@ class Input < Akane
       @next += 1
     else
       @next = 0
+    end
+    if @tmp_prev == 1
+      @prev += 1
+    else
+      @prev = 0
+    end
+    if @tmp_append == 1
+      @append += 1
+    else
+      @append = 0
+    end
+    if @tmp_append_r == 1
+      @append_r += 1
+    else
+      @append_r = 0
     end
     if @tmp_refresh == 1
       @refresh += 1

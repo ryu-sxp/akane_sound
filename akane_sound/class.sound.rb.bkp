@@ -263,7 +263,7 @@ class Sound < Akane
       i = 0
       pl = pl.map do |item|
         if !item[:dir_flag] && !item[:pl_flag]
-          #item[:path] = File.join(dir, item[:filename])
+          item[:path] = File.join(dir, item[:filename])
           item[:index] = i
         else
           item[:index] = nil
@@ -271,12 +271,9 @@ class Sound < Akane
         i += 1
         item
       end
-=begin
       @tmp_playlist_left = pl.select do |item|
         (!item[:dir_flag] && !item[:pl_flag])
       end
-=end
-      @tmp_playlist_left = pl
       @tmp_dir = dir
       p @tmp_playlist_left
     when "right"

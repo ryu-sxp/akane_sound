@@ -194,23 +194,45 @@ class UpperSectionBase < ViewBase
       next if j < i
       txt = nil
       if @pointer == i
-        @@renderer.draw_color = [@@config[:select_bg_color][:red],
-                                 @@config[:select_bg_color][:green],
-                                 @@config[:select_bg_color][:blue],
-                                 @@config[:select_bg_color][:alpha]]
-        @@renderer.fill_rect(el.bg_rect)
-        if File.join(@dir_stack.join(nil), @playlist[i][:filename]) ==
-            @@sound.get_play_path("left")
-          txt = el.txt_sel_bld
-        else
-          txt = el.txt_bld
+        if @focus_flag
+          @@renderer.draw_color = [@@config[:select_bg_color][:red],
+                                   @@config[:select_bg_color][:green],
+                                   @@config[:select_bg_color][:blue],
+                                   @@config[:select_bg_color][:alpha]]
+          @@renderer.fill_rect(el.bg_rect)
+        end
+        case self.class.to_s
+        when "SectionDir"
+          if File.join(@dir_stack.join(nil), @playlist[i][:filename]) ==
+              @@sound.get_play_path("left") && @focus_flag
+            txt = el.txt_sel_bld
+          else
+            txt = el.txt_bld
+          end
+        when "SectionPlaylist"
+          if @playlist[i][:filename] == @@sound.get_play_path("right") &&
+              @focus_flag
+            txt = el.txt_sel_bld
+          else
+            txt = el.txt_bld
+          end
         end
       else
-        if File.join(@dir_stack.join(nil), @playlist[i][:filename]) ==
-            @@sound.get_play_path("left")
-          txt = el.txt_sel
-        else
-          txt = el.txt
+        case self.class.to_s
+        when "SectionDir"
+          if File.join(@dir_stack.join(nil), @playlist[i][:filename]) ==
+              @@sound.get_play_path("left") && @focus_flag
+            txt = el.txt_sel
+          else
+            txt = el.txt
+          end
+        when "SectionPlaylist"
+          if @playlist[i][:filename] == @@sound.get_play_path("right") &&
+              @focus_flag
+            txt = el.txt_sel
+          else
+            txt = el.txt
+          end
         end
       end
       @@renderer.copy(@@renderer.create_texture_from(txt), el.txt_src,
@@ -222,6 +244,71 @@ class UpperSectionBase < ViewBase
       i += 1
       break if i >= @elements.length
     end
+  end
+
+  def get_cache(dir)
+    cache = get_cache_name(dir)
+    if File.exist?(cache)
+      ar = YAML.load(File.open(cache))
+      return ar
+    end
+    return nil
+  end
+
+  def get_playlist(dir)
+    cache = get_cache_name(dir)
+    ar = Array.new
+    dir_contents_dir = Dir.entries(dir).sort.select do |entry|
+      if dir == @@config[:root_dir]
+        File.directory?(File.join(dir, entry)) and
+          !(entry == '.' || entry == '..')
+      else
+        File.directory?(File.join(dir, entry)) and
+          !(entry == '.')
+      end
+    end
+    dir_contents_dir.each do |entry|
+      ar.push({ filename: entry+'/', dir_flag: true, duration: nil, bps: nil,
+                br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
+                tag: nil, title: nil, pl_flag: false, sample: nil, path: nil })
+    end
+    dir_contents_file = Dir.entries(dir).sort.select do |entry|
+      !File.directory?(File.join(dir, entry)) and
+        (/\.mp3|ogg|m4a|wav|mid|flac\z/ === entry)
+    end
+    dir_contents_file.each do |entry|
+      dur = %x( mediainfo --Inform="Audio;%Duration%" "#{dir+entry}" )
+      bps = %x( mediainfo --Inform="Audio;%BitRate%" "#{dir+entry}" )
+      br  = %x( mediainfo --Inform="Audio;%BitRate_Mode%" "#{dir+entry}" )
+      sample  = %x( mediainfo --Inform="Audio;%SamplingRate%" "#{dir+entry}" )
+      #sample2  = %x( mediainfo --Inform="Audio;%SamplingRate/String%" "#{dir+entry}" )
+      artist = %x(ffprobe -loglevel error -show_entries format_tags=artist -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
+      album = %x(ffprobe -loglevel error -show_entries format_tags=album -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
+      title = %x(ffprobe -loglevel error -show_entries format_tags=title -of default=noprint_wrappers=1:nokey=1 "#{dir+entry}" )
+      artist.delete!("\n")
+      title.delete!("\n")
+      album.delete!("\n")
+      pltime = Util.ms_to_time_str(dur.to_i)
+      type = entry[-3..-1].upcase
+      tag = '['+pltime+'|'+type+']'
+      ar.push({ filename: entry, dir_flag: false, duration: dur.to_i,
+                bps: bps.to_i, br: br[0..2], artist: artist, album: album,
+                pl_time: pltime, type: type, tag: tag, title: title,
+                pl_flag: false, sample: sample, path: dir+entry })
+      @tracks += 1
+    end
+    dir_contents_pl = Dir.entries(dir).sort.select do |entry|
+      !File.directory?(File.join(dir, entry)) and
+        (/\.apl.yaml\z/ === entry)
+    end
+    dir_contents_pl.each do |entry|
+      ar.push({ filename: entry+'/', dir_flag: false, duration: nil, bps: nil,
+                br: nil, artist: nil, album: nil, pl_time: nil, type: nil,
+                tag: nil, title: nil, pl_flag: true, sample: nil, path: nil })
+    end
+    # write cache
+    File.open(cache, 'w') { |file| file.write(ar.to_yaml) }
+    ar
   end
 
   private
@@ -259,6 +346,10 @@ class UpperSectionBase < ViewBase
     end
 
     return page
+  end
+
+  def get_cache_name(dir)
+    File.join(dir, ".akane_cache.yaml")
   end
 end
 

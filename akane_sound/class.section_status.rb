@@ -60,8 +60,13 @@ class SectionStatus < ViewBase
     if @@inp.toggle_next == 1
       @@sound.toggle_next
     end
-    if @@inp.next == 1
-      @@sound.skip
+    if @@sound.state != "not playing"
+      if @@inp.next == 1
+        @@sound.skip("next", 1)
+      end
+      if @@inp.prev == 1
+        @@sound.skip("previous", 1)
+      end
     end
     update_timers
     update_progress_bar

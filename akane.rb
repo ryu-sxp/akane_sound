@@ -17,6 +17,8 @@ class Akane
   @@pref_dir   = nil
   @@screen     = nil
   @@sec_status = nil
+  @@sec_dir = nil
+  @@sec_pl = nil
   @@sound      = nil
   @@config     = Hash.new
   @@save_data  = Hash.new
@@ -67,10 +69,10 @@ class Akane
     @@sec_status = SectionStatus.new(0, @@config[:window_h]-80,
                                      @@config[:window_w], 80,
                                      @@config[:view_bottom_bg_color])
-    sec_dir = SectionDir.new(0, 0, @@config[:window_w]/2,
+    @@sec_dir = SectionDir.new(0, 0, @@config[:window_w]/2,
                              @@config[:window_h]-80,
                              @@config[:view_left_bg_color])
-    sec_pl = SectionPlaylist.new(@@config[:window_w]/2, 0,
+    @@sec_pl = SectionPlaylist.new(@@config[:window_w]/2, 0,
                                  @@config[:window_w]/2, @@config[:window_h]-80,
                                  @@config[:view_right_bg_color])
     loop do
@@ -84,21 +86,38 @@ class Akane
       if @@inp.quit >= 1
         exit
       end
+      unless @@sleep_flag
+        if @@inp.switch == 1
+          if @@sec_dir.focus_flag
+            @@sec_dir.focus_flag = false
+            @@sec_pl.focus_flag = true
+          else
+            @@sec_dir.focus_flag = true
+            @@sec_pl.focus_flag = false
+          end
+          @@sec_dir.update_element_strings
+          #@@sec_dir.set_page
+          @@sec_dir.update_element_positions
+          @@sec_pl.update_element_strings
+          #@@sec_pl.set_page
+          @@sec_pl.update_element_positions
+        end
+      end
       if @@window.size[0] != @@win_w || @@window.size[1] != @@win_h
         @@win_w = @@window.size[0]
         @@win_h = @@window.size[1]
         @@screen = SDL2::Rect[0, 0, @@win_w, @@win_h]
         bg.update
-        sec_dir.update_size(0, 0, @@win_w/2, @@win_h-80)
-        sec_pl.update_size(@@win_w/2, 0, @@win_w/2, @@win_h-80)
+        @@sec_dir.update_size(0, 0, @@win_w/2, @@win_h-80)
+        @@sec_pl.update_size(@@win_w/2, 0, @@win_w/2, @@win_h-80)
         @@sec_status.update_size(0, @@win_h-80, @@win_w, 80)
       else
         bg.update
       end
       @@sound.update
       unless @@sleep_flag
-        sec_dir.update
-        sec_pl.update
+        @@sec_dir.update
+        @@sec_pl.update
       end
       @@sec_status.update
       @@sleep_flag = false if @@inp.any_key >= 1
@@ -107,8 +126,8 @@ class Akane
       @@renderer.viewport = nil
       bg.draw
       unless @@sleep_flag
-        sec_dir.draw
-        sec_pl.draw
+        @@sec_dir.draw
+        @@sec_pl.draw
       end
       @@sec_status.draw
       @@renderer.present
