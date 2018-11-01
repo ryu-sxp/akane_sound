@@ -1,4 +1,5 @@
 class UpperSectionBase < ViewBase
+  attr_accessor :max_elements
   def initialize(x, y, w, h, col)
     super
     @view = nil
@@ -87,6 +88,57 @@ class UpperSectionBase < ViewBase
   def update_element_positions
     j = 0
     i = @max_elements*(@page-1)
+    k = -1
+
+    @elements.each do |e|
+      k += 1
+      next if k < i
+      unless @playlist[i][:dir_flag] || @playlist[i][:pl_flag]
+        overshoot = ((@view.w-8)-@elements[i].dur.w-4)
+        unless i == @pointer
+          if @elements[i].txt.w >= overshoot
+            sprite_w = @elements[i].txt.w-(@elements[i].txt.w-overshoot)
+          else
+            sprite_w = @elements[i].txt.w
+          end
+          sprite_h = @elements[i].txt.h
+        else
+          if @elements[i].txt_bld.w >= overshoot
+            sprite_w = @elements[i].txt_bld.w-(@elements[i].txt_bld.w-overshoot)
+          else
+            sprite_w = @elements[i].txt_bld.w
+          end
+          sprite_h = @elements[i].txt_bld.h
+        end
+      else
+        unless i == @pointer
+          sprite_w = @elements[i].txt.w
+          sprite_h = @elements[i].txt.h
+        else
+          sprite_w = @elements[i].txt_bld.w
+          sprite_h = @elements[i].txt_bld.h
+        end
+      end
+      y = (0+(j*@element_h))+((@element_h/2)-(sprite_h/2))
+      @elements[i].txt_src = SDL2::Rect[0, 0, sprite_w, sprite_h]
+      @elements[i].txt_dst = SDL2::Rect[4, y, sprite_w, sprite_h]
+      @elements[i].bg_rect = SDL2::Rect[0, j*@element_h, @view.w, @element_h]
+      unless @playlist[i][:dir_flag] || @playlist[i][:pl_flag]
+        @elements[i].dur_dst = SDL2::Rect[(@view.w-@elements[i].dur.w)-4, y,
+                                          @elements[i].dur.w,
+                                          @elements[i].dur.h]
+      end
+      i+= 1
+      j+= 1
+
+
+    end
+  end
+=begin
+  def update_element_positions
+    j = 0
+    i = @max_elements*(@page-1)
+    Util.p i.to_s
 
     @playlist.each do |item|
       unless item[:dir_flag]
@@ -129,6 +181,7 @@ class UpperSectionBase < ViewBase
       break if i >= @playlist.length
     end
   end
+=end
 
   def update_element_strings
     @border = SDL2::Rect[@view.x-1, @view.y-1, @view.w+2, @view.h+2]
@@ -295,7 +348,7 @@ class UpperSectionBase < ViewBase
                 bps: bps.to_i, br: br[0..2], artist: artist, album: album,
                 pl_time: pltime, type: type, tag: tag, title: title,
                 pl_flag: false, sample: sample, path: dir+entry })
-      @tracks += 1
+      #@tracks += 1
     end
     dir_contents_pl = Dir.entries(dir).sort.select do |entry|
       !File.directory?(File.join(dir, entry)) and
@@ -349,7 +402,11 @@ class UpperSectionBase < ViewBase
   end
 
   def get_cache_name(dir)
-    File.join(dir, ".akane_cache.yaml")
+    unless @@debug_flag
+      return File.join(dir, ".akane_cache.yaml")
+    else
+      return File.join(dir, ".akane_cache_debug.yaml")
+    end
   end
 end
 

@@ -71,9 +71,13 @@ class SectionDir < UpperSectionBase
       if @@inp.append == 1 || @@inp.append_r == 1
         if !@playlist[@pointer][:pl_flag]
           if @playlist[@pointer][:dir_flag]
-            @@sec_pl.append(@playlist[@pointer], true, @dir_stack)
+            if @@inp.append_r == 1
+              @@sec_pl.append(@playlist[@pointer], true, @dir_stack, true)
+            else
+              @@sec_pl.append(@playlist[@pointer], true, @dir_stack, false)
+            end
           else
-            @@sec_pl.append(@playlist[@pointer], false, @dir_stack)
+            @@sec_pl.append(@playlist[@pointer], false, @dir_stack, false)
           end
         end
       end

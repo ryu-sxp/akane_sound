@@ -23,16 +23,28 @@ class SectionPlaylist < UpperSectionBase
     super
   end
 
-  def append(track, dir_flag, dir_stack)
+  def append(track, dir_flag, dir_stack, recursive_flag)
     dir = dir_stack.join(nil)
     unless dir_flag
       track[:filename] = File.join(dir, track[:filename])
       @playlist.push(track)
     else
+      #Util.p File.join(dir, track[:filename])
       ar = get_cache(File.join(dir, track[:filename]))
       ar = get_playlist(File.join(dir, track[:filename])) unless ar
       @playlist += ar
+      if recursive_flag
+        #dir_stack.push(track[:filename])
+        stack_copy = Array.new(dir_stack)
+        stack_copy.push(track[:filename])
+        ar.each do |sel|
+          if sel[:dir_flag] && sel[:filename] != "../"
+            append(sel, true, stack_copy, true)
+          end
+        end
+      end
     end
+    @playlist = @playlist.select { |sel| !sel[:dir_flag] && !sel[:pl_flag]  }
 
     update_element_strings
     set_page
