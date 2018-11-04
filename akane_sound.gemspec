@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.name = 'akane_sound'
-  s.version = '0.0.0'
+  s.version = '0.1.0'
   s.executables << "akane_sound"
   s.date = '2018-11-04'
   s.summary = 'audio player using sdl2'
-  s.description = 'audio player using sdl2'
+  s.description = 'audio player using sdl2. see github link for details'
   s.authors = ["tohya ryu"]
   s.email = 'ryu@hirasaka.io'
   s.files = ["lib/akane_sound.rb", "lib/akane_sound/class.background.rb",
@@ -24,6 +24,6 @@ Gem::Specification.new do |s|
              "data/NotoSansCJKjp-Bold.otf",
              "data/NotoSansCJKjp-Medium.otf",
              "data/NotoSansCJKjp-Regular.otf"]
-  s.homepage = 'https://ryu.hirasaka.io'
-  s.license = 'MIT'
+  s.homepage = 'https://github.com/ryu-sxp/akane_sound'
+  s.license = 'GPL3'
 end

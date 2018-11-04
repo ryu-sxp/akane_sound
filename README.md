@@ -43,6 +43,7 @@ S | toggle shuffle
 N | toggle auto-next
 g | go to beginning of list
 G | go to end of list
+ESC | quit
 
 
 
