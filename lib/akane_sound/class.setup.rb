@@ -20,14 +20,17 @@ class Setup < AkaneSound
 
   def self.prepare_config
     unless File.file?(@@pref_dir+"config.yaml")
-      file = File.open("data/config.yaml", "r")
+      file = File.open(File.join(__dir__, "../../data/config.yaml"), "r")
       contents = file.read
       file.close
       #contents.sub! 'FILE_PATH_BG', @@pref_dir+'akane_bg.png'
-      #contents.sub! 'FILE_PATH_FONT_BIG', @@pref_dir+'NotoSansCJKjp-Medium.otf'
-      #contents.sub! 'FILE_PATH_FONT_BIG', @@pref_dir+'NotoSansCJKjp-Bold.otf'
-      #contents.sub! 'FILE_PATH_FONT', @@pref_dir+'NotoSansCJKjp-Regular.otf'
-      contents.sub! 'FILE_PATH_ROOT', Dir.home
+      contents.sub!('FILE_PATH_BACKGROUND',
+                  File.join(__dir__, '../../data/akane_bg.png'))
+      contents.sub!('FILE_PATH_FONT_BOLD',
+                  File.join(__dir__, '../../data/NotoSansCJKjp-Bold.otf'))
+      contents.sub!('FILE_PATH_FONT',
+                  File.join(__dir__, '../../data/NotoSansCJKjp-Regular.otf'))
+      contents.sub!('FILE_PATH_ROOT', Dir.home)
 
       File.open(@@pref_dir+'config.yaml', 'w') { |file| file.write(contents) }
       @@config = YAML.load(File.open(@@pref_dir+'config.yaml'))
@@ -39,7 +42,7 @@ class Setup < AkaneSound
 
   def self.prepare_save_data
     unless File.file?(@@pref_dir+"save_data.yaml")
-      file = File.open("data/save_data.yaml", "r")
+      file = File.open(File.join(__dir__, "../../data/save_data.yaml"), "r")
       contents = file.read
       file.close
 
