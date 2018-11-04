@@ -1,0 +1,79 @@
+---
+:window_w: 640
+:window_h: 480
+:sleep_timer: 20 # seconds without input until player goes into sleep. 0 diables the feature
+:bg_img: 'data/akane_bg.png'
+:font: 'data/NotoSansCJKjp-Regular.otf'
+:font_big: 'data/NotoSansCJKjp-Bold.otf'
+:font_size: 12
+:line_height_mod: 1.5
+:root_dir: 'FILE_PATH_ROOT'
+:root_dir_debug: ''
+:bg_type: 'repeat' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
+:bg_color:
+    :red: 0
+    :green: 12
+    :blue: 27
+    :alpha: 225
+:view_left_bg_color:
+    :red: 200
+    :green: 0
+    :blue: 20
+    :alpha: 0
+:view_right_bg_color:
+    :red: 0
+    :green: 200
+    :blue: 20
+    :alpha: 0
+:view_bottom_bg_color:
+    :red: 0
+    :green: 0
+    :blue: 20
+    :alpha: 255
+:fg_color:
+    :red: 255
+    :green: 255
+    :blue: 255
+    :alpha: 255
+:text_color:
+    :red: 255
+    :green: 255
+    :blue: 255
+    :alpha: 255
+:text_color_selected:
+    :red: 200
+    :green: 255
+    :blue: 200
+    :alpha: 255
+:text_color_status:
+    :red: 255
+    :green: 255
+    :blue: 255
+    :alpha: 255
+:text_color_disabled:
+    :red: 120
+    :green: 120
+    :blue: 120
+    :alpha: 255
+:volume_bar_color:
+    :red: 0
+    :green: 155
+    :blue: 80
+    :alpha: 255
+:volume_bar_max_color:
+    :red: 155
+    :green: 0
+    :blue: 80
+    :alpha: 255
+:prog_bar_color:
+    :red: 0
+    :green: 155
+    :blue: 155
+    :alpha: 255
+:select_bg_color:
+    :red: 0
+    :green: 0
+    :blue: 0
+    :alpha: 200
+
+

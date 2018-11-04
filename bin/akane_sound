@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'akane_sound'
+p __dir__
+AkaneSound.new.run(ARGV)

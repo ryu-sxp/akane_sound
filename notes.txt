@@ -1,1 +1,0 @@
-mediainfo --Inform="Audio;%Duration%" "Miley Cyrus - Wrecking Ball.mp3"
