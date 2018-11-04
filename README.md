@@ -19,31 +19,31 @@ Just run `gem install` then do execute `akane_sound` for a first startup that se
 
 Keybindings
 -----------
-Key | Function
---- | ---
-enter | play a song, load a playlist, change directory
-j | move cursor down
-k | move cursor up
-page up | move page up
-page down | move page down
-space | toggle pause
-> | volume up
-< | volume down
-a | append selected song to playlist, appends contents if directory is selected
-A | same as above, but recursive
-tab | switch between directory and playlist
-C | clear playlist
-w | write playlist to root_dir/akane_playlists
-s | stops track if playing
-r | refreshes the current directory and updates the cache
-n | skip to next song
-p | skip back to previous song
-R | toggle repeat
-S | toggle shuffle
-N | toggle auto-next
-g | go to beginning of list
-G | go to end of list
-ESC | quit
+| Key | Function |
+| --- | --- |
+| enter | play a song, load a playlist, change directory |
+| j | move cursor down |
+| k | move cursor up |
+| page up | move page up |
+| page down | move page down |
+| space | toggle pause |
+| > | volume up |
+| < | volume down |
+| a | append selected song to playlist, appends contents if directory is selected |
+| A | same as above, but recursive |
+| tab | switch between directory and playlist |
+| C | clear playlist |
+| w | write playlist to root_dir/akane_playlists |
+| s | stops track if playing |
+| r | refreshes the current directory and updates the cache |
+| n | skip to next song |
+| p | skip back to previous song |
+| R | toggle repeat |
+| S | toggle shuffle |
+| N | toggle auto-next |
+| g | go to beginning of list |
+| G | go to end of list |
+| ESC | quit |
 
 
 
