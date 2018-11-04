@@ -1,7 +1,7 @@
 ---
 :window_w: 640
 :window_h: 480
-:sleep_timer: 20 # seconds without input until player goes into sleep. 0 diables the feature
+:sleep_timer: 60 # seconds without input until player goes into sleep. 0 disables the feature
 :bg_img: 'data/akane_bg.png'
 :font: 'data/NotoSansCJKjp-Regular.otf'
 :font_big: 'data/NotoSansCJKjp-Bold.otf'
@@ -9,7 +9,7 @@
 :line_height_mod: 1.5
 :root_dir: 'FILE_PATH_ROOT'
 :root_dir_debug: ''
-:bg_type: 'repeat' # 'none', 'center', 'tile', 'scale', 'stretch', 'fit'
+:bg_type: 'normal' # 'none', 'normal', 'center', 'repeat'
 :bg_color:
     :red: 0
     :green: 12
