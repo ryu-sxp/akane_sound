@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'akane_sound'
-  s.version = '0.1.3'
+  s.version = '0.1.4'
   s.executables << "akane_sound"
   s.date = '2018-11-04'
   s.summary = 'audio player using sdl2'

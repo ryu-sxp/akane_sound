@@ -39,8 +39,9 @@ class SectionPlaylist < UpperSectionBase
   def append(track, dir_flag, dir_stack, recursive_flag)
     dir = dir_stack.join(nil)
     unless dir_flag
-      track[:filename] = File.join(dir, track[:filename])
-      @playlist.push(track)
+      track2 = track.clone
+      track2[:filename] = File.join(dir, track[:filename])
+      @playlist.push(track2)
     else
       #Util.p File.join(dir, track[:filename])
       ar = get_cache(File.join(dir, track[:filename]))
