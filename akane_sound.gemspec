@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'akane_sound'
-  s.version = '0.1.2'
+  s.version = '0.1.3'
   s.executables << "akane_sound"
   s.date = '2018-11-04'
   s.summary = 'audio player using sdl2'
@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
              "data/config.yaml",
              "data/save_data.yaml",
              "data/NotoSansCJKjp-Bold.otf",
-             "data/NotoSansCJKjp-Medium.otf",
              "data/NotoSansCJKjp-Regular.otf"]
   s.homepage = 'https://github.com/ryu-sxp/akane_sound'
   s.license = 'GPL-3.0'

@@ -27,8 +27,8 @@
     :alpha: 0
 :view_bottom_bg_color:
     :red: 0
-    :green: 0
-    :blue: 20
+    :green: 1
+    :blue: 7
     :alpha: 255
 :fg_color:
     :red: 255
