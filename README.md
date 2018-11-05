@@ -1,7 +1,7 @@
 akane_sound
 ===============
 A simple GUI audio player for GNU/Linux operation systems. Keyboard controls only.
-![sample screenshot](https://github.com/ryu-sxp/akane_sound/sample.png "test")
+![sample screenshot](https://raw.githubusercontent.com/ryu-sxp/akane_sound/master/sample.png "test")
 
 Features
 --------
